@@ -32,6 +32,7 @@ include("sampledsignals.jl")
 #                                   jlls                                       #
 # ---------------------------------------------------------------------------- #
 include("jlls/loseless.jl")
+include("jlls/lossy.jl")
 
 include("audioreads.jl")
 
