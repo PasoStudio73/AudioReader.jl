@@ -1,6 +1,6 @@
 name = "AudioReader"
 uuid = "a9c2ce0f-e965-4f6d-9ec4-ce2d5ed55f28"
-authors = ["PasoStudio73 <paso.studio73@gmail.com> and contributors"]
+authors = ["Riccardo PASINI"]
 version = "1.0.0-DEV"
 
 [compat]
