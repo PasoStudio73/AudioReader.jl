@@ -43,6 +43,30 @@ function unsafe_read!(source::SndFileSource, buf::Array, frameoffset, framecount
     nread
 end
 
+function unsafe_read!(source::MP3FileSource, buf::Array, frameoffset, framecount)
+    total = min(framecount, nframes(source) - source.pos)
+    nread = 0
+
+    mpg123 = source.mpg123
+    encsize = sizeof(source.info.datatype)
+    readbuf = source.readbuf
+    nchans = nchannels(source)
+
+    while nread < total
+        n = min(size(readbuf, 2), total - nread)
+        nr = mpg123_read!(mpg123, readbuf, n * encsize * nchans)
+        nr = div(nr, encsize * nchans)
+
+        transpose!(view(buf, (1:nr) .+ (nread+frameoffset), :), view(readbuf, :, 1:nr))
+
+        source.pos += nr
+        nread += nr
+        nr == n || break
+    end
+
+    nread
+end
+
 # ---------------------------------------------------------------------------- #
 #                                    read                                      #
 # ---------------------------------------------------------------------------- #
