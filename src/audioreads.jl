@@ -64,3 +64,14 @@ function Base.read(source::AbstractSampleSource)
     SampleBuf(hcat(cumbufs...), samplerate(source))
 end
 
+# ---------------------------------------------------------------------------- #
+#                                   close                                      #
+# ---------------------------------------------------------------------------- #
+function Base.close(s::SndFileSource)
+    if s.filePtr != C_NULL
+        sf_close(s.filePtr)
+        s.filePtr = C_NULL
+    else
+        @warn "close called more than once on $s"
+    end
+end
