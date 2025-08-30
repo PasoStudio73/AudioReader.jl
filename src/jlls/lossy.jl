@@ -10,6 +10,29 @@ function MP3INFO(buf::SampleBuf{T}) where {T}
     MP3INFO(nframes(buf), nchannels(buf), samplerate(buf), T)
 end
 
+
+
+mutable struct MP3FileSource{T} <: AbstractSampleSource
+    path::AbstractString
+    mpg123::MPG123
+    info::MP3INFO
+    pos::Int64
+    readbuf::Array{T, 2}
+end
+
+function MP3FileSource(path::AbstractString, mpg123::MPG123, info::MP3INFO, bufsize::Integer)
+    readbuf = Array{info.datatype, 2}(undef, info.nchannels, bufsize)
+    MP3FileSource(path, mpg123, info, Int64(0), readbuf)
+end
+
+@inline nchannels(source::MP3FileSource) = Int(source.info.nchannels)
+@inline samplerate(source::MP3FileSource) = source.info.samplerate
+@inline nframes(source::MP3FileSource) = source.info.nframes
+@inline Base.eltype(source::MP3FileSource{T}) where {T} = T
+
+
+
+
 """return a string that explains given error code"""
 function mpg123_plain_strerror(err)
     str = ccall((:mpg123_plain_strerror, libmpg123), Ptr{Cchar}, (Cint,), err)
@@ -128,4 +151,17 @@ end
 function initialize_readers()
     # initialize mpg123; this needs to be done only once
     mpg123_init()
+end
+
+
+
+"""convert mpg123 encoding to julia datatype"""
+function encoding_to_type(encoding)
+    mapping = Dict{Integer, Type}(
+       MPG123_ENC_SIGNED_16 => PCM16Sample,
+       # TODO: support more
+    )
+
+    encoding in keys(mapping) || error("Unsupported encoding $encoding")
+    mapping[encoding]
 end
