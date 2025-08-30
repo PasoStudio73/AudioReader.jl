@@ -14,7 +14,7 @@ using mpg123_jll: libmpg123
 #                                  files io                                    #
 # ---------------------------------------------------------------------------- #
 include("fileio.jl")
-export @format_str
+export File, @format_str
 
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
@@ -35,5 +35,6 @@ include("jlls/loseless.jl")
 include("jlls/lossy.jl")
 
 include("audioreads.jl")
+export load_helper
 
 end
