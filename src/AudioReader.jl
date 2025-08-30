@@ -22,4 +22,7 @@ export @format_str
 include("types/loseless.jl")
 include("types/lossy.jl")
 
+include("sampledsignals.jl")
+include("audioreads.jl")
+
 end
