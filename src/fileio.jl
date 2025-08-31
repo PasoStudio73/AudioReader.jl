@@ -11,17 +11,14 @@ An easy way to write `AbstractDataFormat{:WAV}` is `format"WAV"`.
 """
 # struct AbstractDataFormat{sym} end
 abstract type AbstractDataFormat{sym} end
+formatname(::Type{AbstractDataFormat{sym}}) where sym = sym
+
+abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
+formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 
 macro format_str(s)
     :(AbstractDataFormat{$(Expr(:quote, Symbol(s)))})
 end
-
-formatname(::Type{AbstractDataFormat{sym}}) where sym = sym
-
-
-abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
-
-formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 
 # ---------------------------------------------------------------------------- #
 #                                 File struct                                  #
@@ -32,14 +29,22 @@ formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 Indicates that `filename` is a file of known [`AbstractDataFormat`](@ref) `fmt`.
 For example, `File{format"WAV"}(filename)` would indicate a WAV file.
 """
-struct File{F<:AbstractDataFormat, Name} <: AbstractFormatted{F}
-    filename::Name
+struct File{F<:AbstractDataFormat} <: AbstractFormatted{F}
+    filename::String
+
+    File{F}(file::AbstractString) where F<:AbstractDataFormat = new{F}(String(file)) # canonicalize to limit type-diversity
 end
+
 File{F}(file::File{F}) where F<:AbstractDataFormat = file
 File{AbstractDataFormat{sym}}(@nospecialize(file::AbstractFormatted)) where sym = throw(ArgumentError("cannot change the format of $file to $sym"))
-File{F}(file::AbstractString) where F<:AbstractDataFormat = File{F,String}(String(file)) # canonicalize to limit type-diversity
-File{F}(file) where F<:AbstractDataFormat = File{F,typeof(file)}(file)
 
+function File(file::AbstractString)
+
+end
+
+# ---------------------------------------------------------------------------- #
+#                                File methods                                  #
+# ---------------------------------------------------------------------------- #
 """
     filename(file)
 
