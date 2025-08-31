@@ -1,3 +1,4 @@
+using AudioReader
 using PyCall
 
 const req_py_pkgs = ["librosa"]
@@ -22,12 +23,6 @@ end
 __init__()
 load_audio(file, sr) = py"load_audio"(file, sr)
 
-# using FileIO: load
-# using MP3
-# using SampledSignals
-# using LibSndFile
-using AudioReader
-
 file = "/home/paso/Documents/Aclai/Julia_additional_files/read_audiofile/test1.wav"
 fmp3 = "/home/paso/Documents/Aclai/Julia_additional_files/read_audiofile/test2.mp3"
 
@@ -42,7 +37,6 @@ m16 = load_helper(File{format"MP3"}(fmp3))
 f32 = map(Float32, m16)
 # testmono = vec(mean(f32.data, dims=2))
 testmono = vec(mean(f32, dims=2))
-
 
 # @btime load(file)
 # @btime load_helper(File{format"WAV"}(file))

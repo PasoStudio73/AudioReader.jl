@@ -1,43 +1,44 @@
+# ---------------------------------------------------------------------------- #
+#                               abstract types                                 #
+# ---------------------------------------------------------------------------- #
 """
-    DataFormat{sym}()
+    AbstractDataFormat{sym}()
 
 Indicates a known binary or text format of kind `sym`, where `sym`
-is always a symbol. For example, a .csv file might have `DataFormat{:CSV}()`.
+is always a symbol. For example, a .csv file might have `AbstractDataFormat{:CSV}()`.
 
-An easy way to write `DataFormat{:WAV}` is `format"WAV"`.
+An easy way to write `AbstractDataFormat{:WAV}` is `format"WAV"`.
 """
-struct DataFormat{sym} end
+# struct AbstractDataFormat{sym} end
+abstract type AbstractDataFormat{sym} end
 
 macro format_str(s)
-    :(DataFormat{$(Expr(:quote, Symbol(s)))})
+    :(AbstractDataFormat{$(Expr(:quote, Symbol(s)))})
 end
 
-formatname(::Type{DataFormat{sym}}) where sym = sym
+formatname(::Type{AbstractDataFormat{sym}}) where sym = sym
 
 
-abstract type Formatted{F<:DataFormat} end  # A specific file or stream
+abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
 
-formatname(::Formatted{F}) where F<:DataFormat = formatname(F)
+formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 
-## File:
-
+# ---------------------------------------------------------------------------- #
+#                                 File struct                                  #
+# ---------------------------------------------------------------------------- #
 """
     File{fmt}(filename)
 
-Indicates that `filename` is a file of known [`DataFormat`](@ref) `fmt`.
-For example, `File{format"PNG"}(filename)` would indicate a PNG file.
-
-!!! compat
-    `File{fmt}(filename)` requires FileIO 1.6 or higher. The deprecated syntax `File(fmt, filename)` works
-    on all FileIO 1.x releases.
+Indicates that `filename` is a file of known [`AbstractDataFormat`](@ref) `fmt`.
+For example, `File{format"WAV"}(filename)` would indicate a WAV file.
 """
-struct File{F<:DataFormat, Name} <: Formatted{F}
+struct File{F<:AbstractDataFormat, Name} <: AbstractFormatted{F}
     filename::Name
 end
-File{F}(file::File{F}) where F<:DataFormat = file
-File{DataFormat{sym}}(@nospecialize(file::Formatted)) where sym = throw(ArgumentError("cannot change the format of $file to $sym"))
-File{F}(file::AbstractString) where F<:DataFormat = File{F,String}(String(file)) # canonicalize to limit type-diversity
-File{F}(file) where F<:DataFormat = File{F,typeof(file)}(file)
+File{F}(file::File{F}) where F<:AbstractDataFormat = file
+File{AbstractDataFormat{sym}}(@nospecialize(file::AbstractFormatted)) where sym = throw(ArgumentError("cannot change the format of $file to $sym"))
+File{F}(file::AbstractString) where F<:AbstractDataFormat = File{F,String}(String(file)) # canonicalize to limit type-diversity
+File{F}(file) where F<:AbstractDataFormat = File{F,typeof(file)}(file)
 
 """
     filename(file)
