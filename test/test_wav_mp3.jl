@@ -45,7 +45,7 @@ testmono = vec(mean(f32, dims=2))
 
 
 # @btime load(file)
-@btime load_helper(File{format"WAV"}(file))
+# @btime load_helper(File{format"WAV"}(file))
 # LibSndFile
 # 1.277 ms (1110 allocations: 480.74 KiB)
 
