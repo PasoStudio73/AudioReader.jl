@@ -34,6 +34,10 @@ include("sampledsignals.jl")
 include("jlls/loseless.jl")
 include("jlls/lossy.jl")
 
+# ---------------------------------------------------------------------------- #
+#                                   main                                       #
+# ---------------------------------------------------------------------------- #
+include("audiofuncs.jl")
 include("readers.jl")
 include("load.jl")
 export load

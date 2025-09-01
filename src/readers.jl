@@ -100,8 +100,7 @@ function Base.close(s::SndFileSource)
     end
 end
 
-
-
-
-
-
+@inline function Base.close(source::MP3FileSource)
+    mpg123_close(source.mpg123)
+    mpg123_delete(source.mpg123)
+end

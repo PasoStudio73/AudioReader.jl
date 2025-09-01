@@ -68,6 +68,7 @@ end
 #                                load helpers                                  #
 # ---------------------------------------------------------------------------- #
 const loseless_format = Union{format"WAV", format"FLAC", format"OGG"}
+
 # convert a `load` call into a `loadstreaming` call that properly
 # cleans up the stream
 function load_helper(src::File{<:loseless_format}, args...)
@@ -122,35 +123,10 @@ function load_helper(path::File{format"MP3"})
     buffer
 end
 
-# function loadstream(path::File{format"MP3"}; blocksize = -1)
-#     mpg123 = mpg123_new()
-#     mpg123_open(mpg123, path.filename)
-#     nframes = mpg123_length(mpg123)
-#     samplerate, nchannels, encoding = mpg123_getformat(mpg123)
-#     if blocksize < 0
-#         blocksize = mpg123_outblock(mpg123)
-#     end
-#     datatype = encoding_to_type(encoding)
-#     encsize = sizeof(datatype)
-
-#     info = MP3INFO(nframes, nchannels, samplerate, datatype)
-#     bufsize = div(blocksize, encsize * nchannels)
-#     MP3FileSource(filename(path), mpg123, info, bufsize)
-# end
-
-# @inline function Base.read(source::MP3FileSource)
-#     read(source, nframes(source) - source.pos)
-# end
-
-@inline function Base.close(source::MP3FileSource)
-    mpg123_close(source.mpg123)
-    mpg123_delete(source.mpg123)
-end
-
 # ---------------------------------------------------------------------------- #
 #                             user function load                               #
 # ---------------------------------------------------------------------------- #
-function load(filename::AbstractString)
+function load(filename::AbstractString; kwargs...)
     sym = filecheck(filename)
     file = File{AbstractDataFormat{sym}}(filename)
     load_helper(file)
