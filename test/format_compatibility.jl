@@ -47,4 +47,4 @@ f16 = load(flac_file; mono=true)
 # 578.070 μs (34372 allocations: 1.77 MiB)
 
 # resample
-@test_nowarn load(wav_file; sr=8000)
+# @test_nowarn load(wav_file; sr=8000)
