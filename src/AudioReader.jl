@@ -16,6 +16,7 @@ using mpg123_jll: libmpg123
 include("fileio.jl")
 export @format_str, formatname
 export File, filename, file_extension
+export load
 
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
