@@ -1,7 +1,7 @@
 name = "AudioReader"
 uuid = "a9c2ce0f-e965-4f6d-9ec4-ce2d5ed55f28"
 authors = ["Riccardo PASINI"]
-version = "1.0.1-DEV"
+version = "1.0.2-DEV"
 
 [deps]
 FixedPointNumbers = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
