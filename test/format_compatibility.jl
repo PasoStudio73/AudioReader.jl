@@ -38,7 +38,7 @@ f16 = load(flac_file; mono=true)
 @test isapprox(libo16, data(o16))
 @test isapprox(libf16, data(f16))
 
-@btime load(wav_file)
+# @btime load(wav_file)
 # LibSndFile
 # 1.277 ms (1110 allocations: 480.74 KiB)
 # WAV
@@ -47,4 +47,4 @@ f16 = load(flac_file; mono=true)
 # 578.070 μs (34372 allocations: 1.77 MiB)
 
 # resample
-# @test_nowarn load(wav_file; sr=8000)
+@test_nowarn load(wav_file; sr=8000)
