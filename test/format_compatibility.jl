@@ -29,22 +29,14 @@ libo16, _ = load_audio(ogg_file, 44100)
 libf16, _ = load_audio(flac_file, 44100)
 
 w16 = load(wav_file)
-m16 = load(mp3_file)
-o16 = load(ogg_file)
-f16 = load(flac_file)
+m16 = load(mp3_file; mono=true)
+o16 = load(ogg_file; mono=true)
+f16 = load(flac_file; mono=true)
 
-m32 = map(Float32, m16)
-testmono = vec(mean(m32, dims=2))
-
-o16mono = vec(mean(o16, dims=2))
-
-f32 = map(Float32, f16)
-f32mono = vec(mean(f32, dims=2))
-
-@test isapprox(libw16, map(Float32, w16.data))
-@test isapprox(libm16, map(Float32, testmono))
-@test isapprox(libo16, o16mono)
-@test isapprox(libf16, f32mono)
+@test isapprox(libw16, data(w16))
+@test isapprox(libm16, data(m16))
+@test isapprox(libo16, data(o16))
+@test isapprox(libf16, data(f16))
 
 @btime load(wav_file)
 # LibSndFile
@@ -52,5 +44,7 @@ f32mono = vec(mean(f32, dims=2))
 # WAV
 # 1.372 ms (722 allocations: 811.11 KiB)
 # AudioReader
-# 575.113 μs (34357 allocations: 1.51 MiB)
+# 578.070 μs (34372 allocations: 1.77 MiB)
 
+# resample
+@test_nowarn load(wav_file; sr=8000)

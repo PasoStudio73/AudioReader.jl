@@ -4,19 +4,23 @@ authors = ["Riccardo PASINI"]
 version = "0.0.2"
 
 [deps]
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 FixedPointNumbers = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
-libsndfile_jll = "5bf562c0-5a39-5b4f-b979-f64ac885830c"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-mpg123_jll = "3205ef68-7822-558b-ad0d-1b4740f12437"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+libsndfile_jll = "5bf562c0-5a39-5b4f-b979-f64ac885830c"
+mpg123_jll = "3205ef68-7822-558b-ad0d-1b4740f12437"
 
 [compat]
+DSP = "0.7, 0.8"
 FixedPointNumbers = "0.8"
-libsndfile_jll = "1.1"
 LinearAlgebra = "1.11"
-mpg123_jll = "1.33"
+StatsBase = "0.34"
 Unitful = "1.24"
 julia = "1"
+libsndfile_jll = "1.1"
+mpg123_jll = "1.33"
 
 [extras]
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"

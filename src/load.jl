@@ -129,5 +129,6 @@ end
 function load(filename::AbstractString; kwargs...)
     sym = filecheck(filename)
     file = File{AbstractDataFormat{sym}}(filename)
-    load_helper(file)
+    samplebuf = load_helper(file)
+    AudioFile(samplebuf; kwargs...)
 end

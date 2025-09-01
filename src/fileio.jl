@@ -86,10 +86,24 @@ Returns the filename associated with [`File`](@ref) `file`.
 filename(@nospecialize(f::File)) = f.filename
 
 """
+    data(file)
+
+Returns the audio data associated with [`File`](@ref) `file`.
+"""
+data(@nospecialize(f::File)) = f.data
+
+"""
     file_extension(file)
 
 Returns the file extension associated with [`File`](@ref) `file`.
 """
 file_extension(@nospecialize(f::File)) = splitext(filename(f))[2]
+
+"""
+    Base.eltype(file)
+
+Returns the file extension associated with [`File`](@ref) `file`.
+"""
+Base.eltype(@nospecialize(f::File)) = eltype(data(f))
 
 

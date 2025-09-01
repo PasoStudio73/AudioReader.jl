@@ -70,9 +70,9 @@ buffer will be an MxC matrix. So a 1-second stereo audio buffer sampled at
 44100Hz with 32-bit floating-point samples in the time domain would have the
 type SampleBuf{Float32, 2}.
 """
-mutable struct SampleBuf{T, N} <: AbstractSampleBuf{T, N}
-    data::Array{T, N}
-    samplerate::Float64
+mutable struct SampleBuf{T,N} <: AbstractSampleBuf{T,N}
+    data :: Array{T,N}
+    sr   :: Int64
 end
 
 # define constructor so conversion is applied to `sr`
@@ -82,7 +82,6 @@ SampleBuf(T::Type, sr, dims...) = SampleBuf(Array{T}(undef, dims...), sr)
 SampleBuf(T::Type, sr, len::Quantity) = SampleBuf(T, sr, inframes(Int,len,sr))
 SampleBuf(T::Type, sr, len::Quantity, ch) = SampleBuf(T, sr, inframes(Int,len,sr), ch)
 
-samplerate(buf::AbstractSampleBuf) = buf.samplerate
 nchannels(buf::AbstractSampleBuf{T, 2}) where {T} = size(buf.data, 2)
 nchannels(buf::AbstractSampleBuf{T, 1}) where {T} = 1
 nframes(buf::AbstractSampleBuf) = size(buf.data, 1)
@@ -92,4 +91,25 @@ Base.IndexStyle(::Type{T}) where {T <: AbstractSampleBuf} = Base.IndexLinear()
 # this is the fundamental indexing operation needed for the AbstractArray interface
 Base.getindex(buf::AbstractSampleBuf, i::Int) = buf.data[i];
 Base.setindex!(buf::AbstractSampleBuf, val, i::Int) = buf.data[i] = val
+
+"""
+    data(file)
+
+Returns the audio data associated with [`SampleBuf`](@ref) `file`.
+"""
+data(buf::SampleBuf) = buf.data
+
+"""
+    samplerate(file)
+
+Returns the samplerate associated with [`SampleBuf`](@ref) `file`.
+"""
+samplerate(buf::AbstractSampleBuf) = buf.sr
+
+"""
+    Base.eltype(file)
+
+Returns the file extension associated with [`SampleBuf`](@ref) `file`.
+"""
+Base.eltype(buf::SampleBuf) = eltype(data(buf))
 

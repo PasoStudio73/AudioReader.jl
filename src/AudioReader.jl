@@ -15,7 +15,7 @@ using mpg123_jll: libmpg123
 # ---------------------------------------------------------------------------- #
 include("fileio.jl")
 export @format_str, formatname
-export File, filename, file_extension
+export File, filename, data, file_extension
 
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
@@ -37,9 +37,12 @@ include("jlls/lossy.jl")
 # ---------------------------------------------------------------------------- #
 #                                   main                                       #
 # ---------------------------------------------------------------------------- #
-include("audiofuncs.jl")
+using DSP: resample
+using StatsBase: mean
+
 include("readers.jl")
 include("load.jl")
+include("audiofile.jl")
 export load
 
 end
