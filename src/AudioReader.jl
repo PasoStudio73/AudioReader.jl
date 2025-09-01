@@ -23,7 +23,6 @@ export File, filename, file_extension
 include("types/loseless.jl")
 include("types/lossy.jl")
 
-
 # ---------------------------------------------------------------------------- #
 #                              sampledsignals                                  #
 # ---------------------------------------------------------------------------- #
@@ -37,6 +36,6 @@ include("jlls/lossy.jl")
 
 include("readers.jl")
 include("load.jl")
-export load_helper, load
+export load
 
 end

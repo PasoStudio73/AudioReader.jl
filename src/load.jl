@@ -28,7 +28,6 @@ function match(io, magics::Tuple{Vector{UInt8}, Vector{UInt8}})::Bool
     tmp = read(io, min(len, maximum(lengths)))
     for m in magics # start with the longest since they are most specific
         if magic_equal(m, tmp)
-            @show tmp
             return true
         end
     end
@@ -72,23 +71,14 @@ const loseless_format = Union{format"WAV", format"FLAC", format"OGG"}
 # convert a `load` call into a `loadstreaming` call that properly
 # cleans up the stream
 function load_helper(src::File{<:loseless_format}, args...)
-    @show "PASO SNDLIB QUI 3"
     # str = loadstreaming(src, args...)
 
-    @show "PASO SNDLIB QUI 1"
     sfinfo = SF_Info()
-    @show "PROVA"
-    @show sfinfo
     fname = filename(src)
-    @show fname
+
     # sf_open fills in sfinfo
     filePtr = sf_open(fname, SFM_READ, sfinfo)
-    @show filePtr
-    
     str = SndFileSource(fname, filePtr, sfinfo)
-
-    @show "PASONE"
-    @show str isa AbstractSampleSource
 
     buf = try
         read(str)
@@ -132,33 +122,21 @@ function load_helper(path::File{format"MP3"})
     buffer
 end
 
-# @inline loadstream(path::AbstractString, args...; kwargs...) =
-#     loadstream(query(path), args...; kwargs...)
-
-# function loadstream(f::Function, args...; kwargs...)
-#     str = loadstream(args...; kwargs...)
-#     try
-#         f(str)
-#     finally
-#         close(str)
+# function loadstream(path::File{format"MP3"}; blocksize = -1)
+#     mpg123 = mpg123_new()
+#     mpg123_open(mpg123, path.filename)
+#     nframes = mpg123_length(mpg123)
+#     samplerate, nchannels, encoding = mpg123_getformat(mpg123)
+#     if blocksize < 0
+#         blocksize = mpg123_outblock(mpg123)
 #     end
+#     datatype = encoding_to_type(encoding)
+#     encsize = sizeof(datatype)
+
+#     info = MP3INFO(nframes, nchannels, samplerate, datatype)
+#     bufsize = div(blocksize, encsize * nchannels)
+#     MP3FileSource(filename(path), mpg123, info, bufsize)
 # end
-
-function loadstream(path::File{format"MP3"}; blocksize = -1)
-    mpg123 = mpg123_new()
-    mpg123_open(mpg123, path.filename)
-    nframes = mpg123_length(mpg123)
-    samplerate, nchannels, encoding = mpg123_getformat(mpg123)
-    if blocksize < 0
-        blocksize = mpg123_outblock(mpg123)
-    end
-    datatype = encoding_to_type(encoding)
-    encsize = sizeof(datatype)
-
-    info = MP3INFO(nframes, nchannels, samplerate, datatype)
-    bufsize = div(blocksize, encsize * nchannels)
-    MP3FileSource(filename(path), mpg123, info, bufsize)
-end
 
 # @inline function Base.read(source::MP3FileSource)
 #     read(source, nframes(source) - source.pos)
@@ -172,6 +150,8 @@ end
 # ---------------------------------------------------------------------------- #
 #                             user function load                               #
 # ---------------------------------------------------------------------------- #
-function load(file::AbstractString)
-    filecheck(file)
+function load(filename::AbstractString)
+    sym = filecheck(filename)
+    file = File{AbstractDataFormat{sym}}(filename)
+    load_helper(file)
 end
