@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
 # ---------------------------------------------------------------------------- #
-const AudioFormat = Union{Vector{T}, Matrix{T}} where {T<:Float32}
+const AudioFormat{T} = Union{Vector{T}, Matrix{T}} where {T<:Float32}
 
 # ---------------------------------------------------------------------------- #
 #                                 audio utils                                  #
@@ -18,9 +18,13 @@ end
 # ---------------------------------------------------------------------------- #
 #                              AudioFile struct                                #
 # ---------------------------------------------------------------------------- #
-struct AudioFile
+struct AudioFile{T}
     data :: AudioFormat
     sr   :: Int64
+
+    function AudioFile(audiodata::AudioFormat{T}, sr::Int64) where T
+        new{T}(audiodata, sr)
+    end
 end
 
 # ---------------------------------------------------------------------------- #
@@ -45,6 +49,8 @@ function AudioFile(
 
     AudioFile(audiodata, sr)
 end
+
+Base.eltype(::AudioFile{T}) where T = T
 
 """
     data(file)
