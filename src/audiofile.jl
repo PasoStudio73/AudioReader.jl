@@ -1,7 +1,9 @@
+abstract type AbstractAudioFile end
+
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
 # ---------------------------------------------------------------------------- #
-const AudioFormat{T} = Union{Vector{T}, Matrix{T}} where {T<:Float32}
+const AudioFormat{T} = Union{Vector{T}, Matrix{T}} where T
 
 # ---------------------------------------------------------------------------- #
 #                                 audio utils                                  #
@@ -18,7 +20,7 @@ end
 # ---------------------------------------------------------------------------- #
 #                              AudioFile struct                                #
 # ---------------------------------------------------------------------------- #
-struct AudioFile{T}
+struct AudioFile{T} <: AbstractAudioFile
     data :: AudioFormat
     sr   :: Int64
 
