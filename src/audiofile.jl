@@ -51,6 +51,7 @@ function AudioFile(
 end
 
 Base.eltype(::AudioFile{T}) where T = T
+Base.length(f::AudioFile) = size(f.data,1)
 
 """
     data(file)
