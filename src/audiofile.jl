@@ -1,4 +1,9 @@
 # ---------------------------------------------------------------------------- #
+#                                   types                                      #
+# ---------------------------------------------------------------------------- #
+const AudioFormat = Union{Vector{T}, Matrix{T}} where {T<:Float32}
+
+# ---------------------------------------------------------------------------- #
 #                                 audio utils                                  #
 # ---------------------------------------------------------------------------- #
 convert2float32(file::SampleBuf)::Array{Float32} = Float32.(file.data)
@@ -14,8 +19,8 @@ end
 #                              AudioFile struct                                #
 # ---------------------------------------------------------------------------- #
 struct AudioFile
-    data::Vector{Float32}
-    sr::Int64
+    data :: AudioFormat
+    sr   :: Int64
 end
 
 # ---------------------------------------------------------------------------- #
@@ -47,3 +52,17 @@ end
 Returns the audio data associated with [`File`](@ref) `file`.
 """
 data(f::AudioFile) = f.data
+
+"""
+    sr(file)
+
+Returns the sample rate associated with [`File`](@ref) `file`.
+"""
+sr(f::AudioFile) = f.sr
+
+"""
+    ismono(file)
+
+Returns true [`File`](@ref) `file` is mono format.
+"""
+ismono(f::AudioFile) = f.data isa Vector
