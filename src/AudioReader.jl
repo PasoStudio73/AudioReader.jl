@@ -13,9 +13,9 @@ using mpg123_jll: libmpg123
 # ---------------------------------------------------------------------------- #
 #                                  files io                                    #
 # ---------------------------------------------------------------------------- #
-include("fileio.jl")
 export @format_str, formatname
 export File, filename, data, file_extension
+include("fileio.jl")
 
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
@@ -42,7 +42,9 @@ using StatsBase: mean
 
 include("readers.jl")
 include("load.jl")
-include("audiofile.jl")
+
 export load
+export data, sr, nchannels
+include("audiofile.jl")
 
 end

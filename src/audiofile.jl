@@ -52,6 +52,9 @@ function AudioFile(
     AudioFile(audiodata, sr)
 end
 
+#------------------------------------------------------------------------------#
+#                                    methods                                   #
+#------------------------------------------------------------------------------#
 Base.eltype(::AudioFile{T}) where T = T
 Base.length(f::AudioFile) = size(f.data,1)
 
@@ -74,4 +77,4 @@ sr(f::AudioFile) = f.sr
 
 Returns true [`File`](@ref) `file` is mono format.
 """
-ismono(f::AudioFile) = f.data isa Vector
+nchannels(f::AudioFile) = size(f.data, 2)

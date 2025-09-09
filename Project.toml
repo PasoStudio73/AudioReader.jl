@@ -1,7 +1,7 @@
 name = "AudioReader"
 uuid = "a9c2ce0f-e965-4f6d-9ec4-ce2d5ed55f28"
 authors = ["Riccardo PASINI"]
-version = "0.0.3"
+version = "0.0.4"
 
 [deps]
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
