@@ -93,10 +93,12 @@ using DSP: resample
 using StatsBase: mean
 
 include("readers.jl")
-include("load.jl")
 
 export load
-export data, sr, nchannels
+include("load.jl")
+
+export AudioFile
+export data, sr, nchannels, origin_sn, is_norm
 include("audiofile.jl")
 
 end

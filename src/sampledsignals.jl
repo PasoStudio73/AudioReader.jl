@@ -62,14 +62,12 @@ nframes(source::SndFileSource) = source.sfinfo.frames
 # ---------------------------------------------------------------------------- #
 #                                 SampleBuf                                    #
 # ---------------------------------------------------------------------------- #
-"""
-Represents a multi-channel regularly-sampled buffer that stores its own sample
-rate (in samples/second). The wrapped data is an N-dimensional array. A 1-channel
-sample can be represented with a 1D array or an Mx1 matrix, and a C-channel
-buffer will be an MxC matrix. So a 1-second stereo audio buffer sampled at
-44100Hz with 32-bit floating-point samples in the time domain would have the
-type SampleBuf{Float32, 2}.
-"""
+# Represents a multi-channel regularly-sampled buffer that stores its own sample
+# rate (in samples/second). The wrapped data is an N-dimensional array. A 1-channel
+# sample can be represented with a 1D array or an Mx1 matrix, and a C-channel
+# buffer will be an MxC matrix. So a 1-second stereo audio buffer sampled at
+# 44100Hz with 32-bit floating-point samples in the time domain would have the
+# type SampleBuf{Float32, 2}.
 mutable struct SampleBuf{T,N} <: AbstractSampleBuf{T,N}
     data :: Array{T,N}
     sr   :: Int64
@@ -92,24 +90,7 @@ Base.IndexStyle(::Type{T}) where {T <: AbstractSampleBuf} = Base.IndexLinear()
 Base.getindex(buf::AbstractSampleBuf, i::Int) = buf.data[i];
 Base.setindex!(buf::AbstractSampleBuf, val, i::Int) = buf.data[i] = val
 
-"""
-    data(file)
-
-Returns the audio data associated with [`SampleBuf`](@ref) `file`.
-"""
 data(buf::SampleBuf) = buf.data
-
-"""
-    samplerate(file)
-
-Returns the samplerate associated with [`SampleBuf`](@ref) `file`.
-"""
 samplerate(buf::AbstractSampleBuf) = buf.sr
-
-"""
-    Base.eltype(file)
-
-Returns the file extension associated with [`SampleBuf`](@ref) `file`.
-"""
 Base.eltype(buf::SampleBuf) = eltype(data(buf))
 

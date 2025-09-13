@@ -83,7 +83,7 @@ subformatcode(::Type{PCM32Sample}) = SF_FORMAT_PCM_32
 subformatcode(::Type{Float32})     = SF_FORMAT_FLOAT
 subformatcode(::Type{Float64})     = SF_FORMAT_DOUBLE
 
-"""Take a AudioReader format code and return a suitable sample type"""
+# Take a AudioReader format code and return a suitable sample type
 function fmt_to_type(fmt)
     mapping = Dict{UInt32, Type}(
         SF_FORMAT_PCM_S8 => PCM16Sample,

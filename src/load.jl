@@ -90,14 +90,12 @@ function load_helper(src::File{<:loseless_format}, args...)
     buf
 end
 
-"""
-loads an MP3 file as SampledSignals.SampleBuf.
+# loads an MP3 file as SampledSignals.SampleBuf.
 
-# Arguments
-* `file::File{format"MP3"}`: the MP3 file to open
-* `blocksize::Int`: the size of block to read from the disk at one time.
-                   defaults to the outblock size of the MP3 file.
-"""
+# # Arguments
+# * `file::File{format"MP3"}`: the MP3 file to open
+# * `blocksize::Int`: the size of block to read from the disk at one time.
+#                    defaults to the outblock size of the MP3 file.
 # function load_helper(path::File{format"MP3"}; blocksize = -1)
 function load_helper(path::File{format"MP3"})
     mpg123 = mpg123_new()
