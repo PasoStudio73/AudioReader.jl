@@ -65,7 +65,7 @@ function filecheck(file::AbstractString)
 end
 
 # ---------------------------------------------------------------------------- #
-#                                load helpers                                  #
+#                           internal load helpers                              #
 # ---------------------------------------------------------------------------- #
 const loseless_format = Union{format"WAV", format"FLAC", format"OGG"}
 
@@ -122,8 +122,59 @@ function load_helper(path::File{format"MP3"})
 end
 
 # ---------------------------------------------------------------------------- #
-#                             user function load                               #
+#                                     load                                     #
 # ---------------------------------------------------------------------------- #
+"""
+    load(filename::AbstractString; kwargs...) -> AudioFile
+
+Load an audio file from disk with automatic format detection and optional processing.
+
+This is the main entry point for loading audio files in AudioReader. It automatically
+detects the file format, validates the file content, loads the raw audio data,
+and optionally applies processing transformations.
+
+# Arguments
+- `filename::AbstractString`: Path to the audio file to load
+
+# Keyword Arguments
+- `sr::Union{Nothing,Int64}=nothing`: Target sample rate for resampling
+  - `nothing`: Keep original sample rate
+  - `Int64`: Resample to specified rate in Hz
+- `norm::Bool=false`: Whether to normalize audio amplitude to [-1, 1] range
+- `mono::Bool=true` : Whether to convert multi-channel audio to mono
+
+# Returns
+- `AudioFile`: Processed audio data with metadata
+
+# Supported Formats
+- **Lossless**: WAV, FLAC, OGG (via libsndfile)
+- **Lossy**: MP3 (via mpg123)
+
+# Examples
+```julia
+# Basic loading (keeps original properties)
+audio = load("music.wav")
+
+# Load and resample to 16kHz
+audio = load("speech.wav"; sr=16000)
+
+# Load, convert to mono, and normalize
+audio = load("stereo_music.flac"; mono=true, norm=true)
+
+# Full processing pipeline
+audio = load("audio.mp3"; sr=22050, norm=true, mono=false)
+
+# Access loaded data
+data = data(audio)          # Get audio samples
+sample_rate = sr(audio)     # Get current sample rate
+orig_sr = orig_sr(audio)    # Get original sample rate of audiofile 
+                              (identical to sr(audio) if no resample was applied)
+channels = nchannels(audio) # Get number of channels
+normalized = norm(audio)    # Return true if audio was normalized
+```
+
+See also: [`AudioFile`](@ref)
+"""
 function load(filename::AbstractString; kwargs...)
     sym = filecheck(filename)
     file = File{AbstractDataFormat{sym}}(filename)
