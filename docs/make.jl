@@ -5,14 +5,14 @@ using Documenter
 
 makedocs(;
     modules = [AudioReader],
+    # doctest = true,
+    # linkcheck = true,
     authors = "Riccardo Pasini",
     # repo=Documenter.Remotes.GitHub("aclai-lab", "AudioReader.jl"),
     sitename = "AudioReader.jl",
     # format = Documenter.HTML(;
-    #     size_threshold = 4000000,
     #     prettyurls = get(ENV, "CI", "false") == "true",
     #     canonical = "https://aclai-lab.github.io/AudioReader.jl",
-    #     assets = String[],
     # ),
     pages = [
         "Home" => "index.md",
@@ -20,4 +20,10 @@ makedocs(;
     warnonly = :true,
 )
 
-@info "`makedocs` has finished running."
+# deploydocs(;
+#     repo = "github.com/aclai-lab/ModalAssociationRules.jl",
+#     devbranch = "main",
+#     target = "build",
+#     branch = "gh-pages",
+#     versions = ["main" => "main", "stable" => "v^", "v#.#"],
+# )

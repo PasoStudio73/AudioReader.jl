@@ -5,6 +5,14 @@ abstract type AbstractDataFormat{sym} end
 formatname(::Type{AbstractDataFormat{sym}}) where sym = sym
 
 abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
+
+"""
+    formatname(::Type{AbstractDataFormat{sym}}) where sym -> Symbol
+
+Extract the format symbol from an AbstractDataFormat type.
+
+See also: [`@format_str`](@ref)
+"""
 formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 
 """

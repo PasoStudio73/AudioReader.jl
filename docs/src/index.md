@@ -1,3 +1,7 @@
+```@meta
+CurrentModule = AudioReader
+```
+
 # AudioReader - A simple audio files reader
 
 [![Build Status](https://github.com/PasoStudio73/AudioReader.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/PasoStudio73/AudioReader.jl/actions/workflows/CI.yml?query=branch%3Amain)
