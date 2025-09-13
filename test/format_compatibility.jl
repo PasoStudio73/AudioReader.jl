@@ -2,26 +2,17 @@ using AudioReader
 using PyCall
 
 const req_py_pkgs = ["librosa"]
-function __init__()
-    pypkgs = getindex.(PyCall.Conda.parseconda(`list`, PyCall.Conda.ROOTENV), "name")
-    needinstall = !all(p -> in(p, pypkgs), req_py_pkgs)
+pypkgs = getindex.(PyCall.Conda.parseconda(`list`, PyCall.Conda.ROOTENV), "name")
+needinstall = !all(p -> in(p, pypkgs), req_py_pkgs)
 
-    if (needinstall)
-        PyCall.Conda.add_channel("conda-forge")
-        PyCall.Conda.add("librosa")
-    end
-
-    py"""
-    import librosa as librosa
-    import soundfile as soundfile
-
-    def load_audio(file, sr):
-        x, sr_def = librosa.load(file, sr=sr)
-        return x, sr_def
-    """
+if (needinstall)
+    PyCall.Conda.add_channel("conda-forge")
+    PyCall.Conda.add("librosa")
 end
-__init__()
-load_audio(file, sr) = py"load_audio"(file, sr)
+
+librosa = pyimport("librosa")
+
+load_audio(file, sr) = librosa.load(file, sr=sr)
 
 libw16, _ = load_audio(wav_file, 16000)
 libm16, _ = load_audio(mp3_file, 44100)
