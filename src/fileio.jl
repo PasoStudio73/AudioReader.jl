@@ -1,21 +1,40 @@
 # ---------------------------------------------------------------------------- #
 #                               abstract types                                 #
 # ---------------------------------------------------------------------------- #
-"""
-    AbstractDataFormat{sym}()
-
-Indicates a known binary or text format of kind `sym`, where `sym`
-is always a symbol. For example, a .csv file might have `AbstractDataFormat{:CSV}()`.
-
-An easy way to write `AbstractDataFormat{:WAV}` is `format"WAV"`.
-"""
-# struct AbstractDataFormat{sym} end
 abstract type AbstractDataFormat{sym} end
 formatname(::Type{AbstractDataFormat{sym}}) where sym = sym
 
 abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
 formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 
+"""
+    @format_str(s)
+
+Create an AbstractDataFormat type for the given format string.
+
+This macro provides a convenient string literal syntax for creating format types
+used in file I/O operations. It converts a string into the corresponding
+`AbstractDataFormat{Symbol}` type at compile time.
+
+# Arguments
+- `s`: Format string ("WAV", "MP3", "FLAC", "OGG")
+
+# Returns
+- `AbstractDataFormat{Symbol}`: Type representing the specified format
+
+# Examples
+```julia
+# Create format types using string literals
+wav_format  = format"WAV"     # AbstractDataFormat{:WAV}
+mp3_format  = format"MP3"     # AbstractDataFormat{:MP3}
+flac_format = format"FLAC"   # AbstractDataFormat{:FLAC}
+
+# Use in File construction
+file = File{format"WAV"}("audio.wav")
+```
+
+See also: [`File`](@ref), [`File`](@ref), [`formatname`](@ref)
+"""
 macro format_str(s)
     :(AbstractDataFormat{$(Expr(:quote, Symbol(s)))})
 end
@@ -25,7 +44,8 @@ end
 # ---------------------------------------------------------------------------- #
 detectwav(io) = detect_riff(io, b"WAVE")
 
-# Cf. https://developers.google.com/speed/webp/docs/riff_container#riff_file_format, and https://learn.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-#chunks
+# Cf. https://developers.google.com/speed/webp/docs/riff_container#riff_file_format, 
+# and https://learn.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-#chunks
 function detect_riff(io::IO, expected_magic::AbstractVector{UInt8})
     getlength(io) >= 12 || return false
     buf = Vector{UInt8}(undef, 4)
@@ -57,23 +77,51 @@ const sym2info = Dict{Symbol,Any}(
 #                                 File struct                                  #
 # ---------------------------------------------------------------------------- #
 """
-    File{fmt}(filename)
+    File{F<:AbstractDataFormat} <: AbstractFormatted{F}
 
-Indicates that `filename` is a file of known [`AbstractDataFormat`](@ref) `fmt`.
-For example, `File{format"WAV"}(filename)` would indicate a WAV file.
+Type-safe representation of an audio file with format information.
+
+This struct provides a type-parameterized container for audio files that encodes
+the file format in the type system. This enables compile-time format dispatch
+and ensures type safety when working with different audio formats.
+
+# Type Parameters
+- `F<:AbstractDataFormat`: The audio format type (e.g., `AbstractDataFormat{:WAV}`)
+
+# Fields
+- `filename::String`: The canonical file path as a string
+
+# Arguments
+- `file`: File path as string or existing File object
+
+# Examples
+```julia
+# Explicit format specification
+wav_file  = File{format"WAV"}("audio.wav")
+mp3_file  = File{format"MP3"}("music.mp3")
+flac_file = File{format"FLAC"}("high_quality.flac")
+
+# Get file properties
+filename(wav_file)       # Returns "path_to_audio.wav"
+file_extension(wav_file) # Returns ".wav"
+formatname(wav_file)     # Returns :WAV
+
+# Type information is preserved
+typeof(wav_file)         # File{AbstractDataFormat{:WAV}}
+```
+
+See also: [`@format_str`](@ref)
 """
 struct File{F<:AbstractDataFormat} <: AbstractFormatted{F}
     filename::String
 
-    File{F}(file::AbstractString) where F<:AbstractDataFormat = new{F}(String(file)) # canonicalize to limit type-diversity
+    File{F}(file::AbstractString) where F<:AbstractDataFormat = 
+        new{F}(String(file)) # canonicalize to limit type-diversity
 end
 
 File{F}(file::File{F}) where F<:AbstractDataFormat = file
-File{AbstractDataFormat{sym}}(@nospecialize(file::AbstractFormatted)) where sym = throw(ArgumentError("cannot change the format of $file to $sym"))
-
-function File(file::AbstractString)
-
-end
+File{AbstractDataFormat{sym}}(@nospecialize(file::AbstractFormatted)) where sym = 
+    throw(ArgumentError("cannot change the format of $file to $sym"))
 
 # ---------------------------------------------------------------------------- #
 #                                File methods                                  #
