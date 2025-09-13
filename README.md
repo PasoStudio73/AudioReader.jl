@@ -1,6 +1,6 @@
 # AudioReader - A simple audio files reader
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://PasoStudio73.github.io/AudioReader.jl/)
+[![main](https://img.shields.io/badge/docs-stable-blue.svg)](https://PasoStudio73.github.io/AudioReader.jl/main)
 [![Build Status](https://github.com/PasoStudio73/AudioReader.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/PasoStudio73/AudioReader.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/PasoStudio73/AudioReader.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/PasoStudio73/AudioReader.jl)
 
