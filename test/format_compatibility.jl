@@ -1,6 +1,5 @@
 using AudioReader
 using PyCall
-using Pkg
 
 const req_py_pkgs = ["librosa"]
 pypkgs = getindex.(PyCall.Conda.parseconda(`list`, PyCall.Conda.ROOTENV), "name")
