@@ -108,12 +108,12 @@ Return the number of audio channels in an AudioFile.
 nchannels(f::AudioFile) = size(f.data, 2)
 
 """
-    origin_sn(file::AudioFile) -> Int
+    origin_sr(file::AudioFile) -> Int
 
 Return the original sample rate of the audio file before any resampling.
 Return the same value of sr() if any reasmplig was applied.
 """
-origin_sn(f::AudioFile) = f.origin_sn
+origin_sr(f::AudioFile) = f.origin_sr
 
 """
     is_norm(file::AudioFile) -> Bool

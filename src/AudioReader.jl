@@ -98,7 +98,7 @@ export load
 include("load.jl")
 
 export AudioFile
-export data, sr, nchannels, origin_sn, is_norm
+export data, sr, nchannels, origin_sr, is_norm
 include("audiofile.jl")
 
 end

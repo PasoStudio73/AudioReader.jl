@@ -86,9 +86,6 @@ nframes(buf::AbstractSampleBuf) = size(buf.data, 1)
 
 Base.size(buf::AbstractSampleBuf) = size(buf.data)
 Base.IndexStyle(::Type{T}) where {T <: AbstractSampleBuf} = Base.IndexLinear()
-# this is the fundamental indexing operation needed for the AbstractArray interface
-Base.getindex(buf::AbstractSampleBuf, i::Int) = buf.data[i];
-Base.setindex!(buf::AbstractSampleBuf, val, i::Int) = buf.data[i] = val
 
 data(buf::SampleBuf) = buf.data
 samplerate(buf::AbstractSampleBuf) = buf.sr

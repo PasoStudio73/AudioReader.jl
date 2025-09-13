@@ -2,18 +2,7 @@
 #                               abstract types                                 #
 # ---------------------------------------------------------------------------- #
 abstract type AbstractDataFormat{sym} end
-formatname(::Type{AbstractDataFormat{sym}}) where sym = sym
-
 abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
-
-"""
-    formatname(::Type{AbstractDataFormat{sym}}) where sym -> Symbol
-
-Extract the format symbol from an AbstractDataFormat type.
-
-See also: [`@format_str`](@ref)
-"""
-formatname(::AbstractFormatted{F}) where F<:AbstractDataFormat = formatname(F)
 
 """
     @format_str(s)
@@ -126,10 +115,6 @@ struct File{F<:AbstractDataFormat} <: AbstractFormatted{F}
     File{F}(file::AbstractString) where F<:AbstractDataFormat = 
         new{F}(String(file)) # canonicalize to limit type-diversity
 end
-
-File{F}(file::File{F}) where F<:AbstractDataFormat = file
-File{AbstractDataFormat{sym}}(@nospecialize(file::AbstractFormatted)) where sym = 
-    throw(ArgumentError("cannot change the format of $file to $sym"))
 
 # ---------------------------------------------------------------------------- #
 #                                File methods                                  #
