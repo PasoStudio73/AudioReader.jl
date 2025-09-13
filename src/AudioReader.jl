@@ -2,7 +2,7 @@ module AudioReader
 # A Julia package for reading and preprocessing audio files with support for both lossless 
 # and lossy audio formats.
 
-# AudioReader provides a unified interface for loading various audio file formats into Julia,
+# Provides a unified interface for loading various audio file formats into Julia,
 # handling format detection, sample rate conversion, and channel management automatically.
 
 # This package builds upon several key Julia packages:
