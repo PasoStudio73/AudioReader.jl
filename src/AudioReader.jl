@@ -23,10 +23,10 @@ module AudioReader
 
 # ## Features
 
-# - **Multi-format Support**: Reads both lossless (WAV, FLAC) and lossy (MP3) audio formats
-# - **Automatic Format Detection**: Intelligently detects file format from extension and content
-# - **Sample Rate Handling**: Built-in resampling capabilities using DSP.jl
-# - **Channel Management**: Handles mono, stereo, and multi-channel audio files
+# - **Multi-format Support**: Reads both lossless (WAV, FLAC) and lossy (MP3) audio formats.
+# - **Automatic Format Detection**: Intelligently detects file format from extension and content.
+# - **Sample Rate Handling**: Built-in resampling capabilities using DSP.jl.
+# - **Channel Management**: Handles mono, stereo, and multi-channel audio files.
 
 # ## Basic Usage
 
