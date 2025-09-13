@@ -36,8 +36,8 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
-      - name: Build PyCall
-        run: julia -e 'using Pkg; ENV["PYTHON"] = ""; Pkg.build("PyCall")'
+      - name: Install and Build PyCall
+        run: julia -e 'using Pkg; ENV["PYTHON"] = ""; Pkg.add("PyCall"); Pkg.build("PyCall")'
         env:
           PYTHON: ""
       - uses: julia-actions/julia-runtest@v1
