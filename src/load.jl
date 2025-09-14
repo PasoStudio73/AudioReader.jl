@@ -166,9 +166,9 @@ audio = load("audio.mp3"; sr=22050, norm=true, mono=false)
 
 # Access loaded data
 data = data(audio)          # Get audio samples
-sample_rate = sr(audio)     # Get current sample rate
+sample_rate = samplerate(audio)     # Get current sample rate
 orig_sr = orig_sr(audio)    # Get original sample rate of audiofile 
-                              (identical to sr(audio) if no resample was applied)
+                              (identical to samplerate(audio) if no resample was applied)
 channels = nchannels(audio) # Get number of channels
 normalized = norm(audio)    # Return true if audio was normalized
 ```

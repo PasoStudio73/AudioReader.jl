@@ -18,7 +18,7 @@ load(filename::AbstractString)
 AudioFile
 
 data(audiofile::AudioFile)
-sr(audiofile::AudioFile)
+samplerate(audiofile::AudioFile)
 nchannels(audiofile::AudioFile)
 origin_sn(audiofile::AudioFile)
 is_norm(audiofile::AudioFile)

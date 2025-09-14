@@ -38,7 +38,7 @@ module AudioReader
 # audio = load("path/to/audio.wav"; sr=8000, mono=true, norm=false)
 
 # # Access audio properties
-# sample_rate  = sr(audio)         # Get sample rate
+# sample_rate  = samplerate(audio)         # Get sample rate
 # num_channels = nchannels(audio)  # Get number of channels
 # audio_data   = data(audio)       # Get raw audio data
 
@@ -98,7 +98,7 @@ export load
 include("load.jl")
 
 export AudioFile
-export data, sr, nchannels, origin_sr, is_norm
+export data, samplerate, nchannels, origin_sr, is_norm
 include("audiofile.jl")
 
 end

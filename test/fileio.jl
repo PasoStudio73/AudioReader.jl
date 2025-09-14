@@ -19,20 +19,20 @@ file = File{format"WAV"}(wav_file)
 audiofile = load(mp3_file)
 @test audiofile isa AudioFile
 @test nchannels(audiofile) == 1
-@test sr(audiofile) == 44100
+@test samplerate(audiofile) == 44100
 @test origin_sr(audiofile) == 44100
 @test is_norm(audiofile) == false
 
 audiofile = load(mp3_file; mono=false, norm=true)
 @test audiofile isa AudioFile
 @test nchannels(audiofile) == 2
-@test sr(audiofile) == 44100
+@test samplerate(audiofile) == 44100
 @test origin_sr(audiofile) == 44100
 @test is_norm(audiofile) == true
 
 audiofile = load(mp3_file; sr=8000)
 @test audiofile isa AudioFile
-@test sr(audiofile) == 8000
+@test samplerate(audiofile) == 8000
 @test origin_sr(audiofile) == 44100
 
 @test eltype(audiofile) == Float32

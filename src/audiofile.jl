@@ -94,11 +94,11 @@ Returns the audio data associated with [`File`](@ref) `file`.
 data(f::AudioFile) = f.data
 
 """
-    sr(file)
+    samplerate(file)
 
 Returns the sample rate associated with [`File`](@ref) `file`.
 """
-sr(f::AudioFile) = f.sr
+samplerate(f::AudioFile) = f.sr
 
 """
     nchannels(file::AudioFile) -> Int
