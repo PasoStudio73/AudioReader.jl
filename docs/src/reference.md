@@ -1,3 +1,7 @@
+```@meta
+CurrentModule = AudioReader
+```
+
 # Reference
 
 ## Contents

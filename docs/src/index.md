@@ -2,12 +2,8 @@
 CurrentModule = AudioReader
 ```
 
-# AudioReader - A simple audio files reader
+# AudioReader 
 
-[![Build Status](https://github.com/PasoStudio73/AudioReader.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/PasoStudio73/AudioReader.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/PasoStudio73/AudioReader.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/PasoStudio73/AudioReader.jl)
-
-**AudioReader.jl**
 A Julia package for reading and preprocessing audio files with support for both lossless 
 and lossy audio formats.
 
