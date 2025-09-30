@@ -3,7 +3,7 @@ abstract type AbstractAudioFile end
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
 # ---------------------------------------------------------------------------- #
-const AudioFormat{T} = Union{Vector{T}, Matrix{T}} where T
+const AudioFormat{T} = Union{Vector{T}, Array{T}} where T
 
 # ---------------------------------------------------------------------------- #
 #                                 audio utils                                  #
