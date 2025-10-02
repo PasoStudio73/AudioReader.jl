@@ -9,10 +9,10 @@ const AudioFormat{T} = Union{Vector{T}, Array{T}} where T
 #                                 audio utils                                  #
 # ---------------------------------------------------------------------------- #
 convert2float32(file::SampleBuf)::Array{Float32} = Float32.(file.data)
-convert2mono(data::Array{Float32})::Vector{Float32} = vec(mean(data, dims=2))
-normalize(data::Array{Float32})::Array{Float32} = data ./ maximum(abs.(data))
+convert2mono(data::AbstractArray) = vec(mean(data, dims=2))
+normalize(data::Array{<:AudioFormat})::Array{<:AudioFormat} = data ./ maximum(abs.(data))
 
-function convert_sr(file::Array{Float32}, sr::Integer, new_sr::Int64)::Array{Float32}
+function convert_sr(file::Array{<:AudioFormat}, sr::Integer, new_sr::Int64)::Array{<:AudioFormat}
     ratio = Rational(new_sr, sr)
     resample(file, ratio)
 end

@@ -99,6 +99,7 @@ include("load.jl")
 
 export AudioFile
 export data, samplerate, nchannels, origin_sr, is_norm
+export convert2mono
 include("audiofile.jl")
 
 end
