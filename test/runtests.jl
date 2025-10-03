@@ -1,8 +1,4 @@
-using AudioReader
 using Test
-using PyCall
-
-const AR = AudioReader
 
 function run_tests(list)
     println("\n" * ("#"^50))

@@ -69,6 +69,16 @@ end
 # ---------------------------------------------------------------------------- #
 const loseless_format = Union{format"WAV", format"FLAC", format"OGG"}
 
+@inline function loadstream(f::Base.Callable, args...; kwargs...)
+    source = f(args...; kwargs...)
+    
+    try
+        read(source)
+    finally
+        close(source)
+    end
+end
+
 # convert a `load` call into a `loadstreaming` call that properly
 # cleans up the stream
 function load_helper(src::File{<:loseless_format}, args...)
@@ -79,15 +89,7 @@ function load_helper(src::File{<:loseless_format}, args...)
 
     # sf_open fills in sfinfo
     filePtr = sf_open(fname, SFM_READ, sfinfo)
-    str = SndFileSource(fname, filePtr, sfinfo)
-
-    buf = try
-        read(str)
-    finally
-        close(str)
-    end
-
-    buf
+    loadstream(SndFileSource, fname, filePtr, sfinfo)
 end
 
 # loads an MP3 file as SampledSignals.SampleBuf.
@@ -110,15 +112,7 @@ function load_helper(path::File{format"MP3"})
 
     info = MP3INFO(nframes, nchannels, samplerate, datatype)
     bufsize = div(blocksize, encsize * nchannels)
-    source = MP3FileSource(filename(path), mpg123, info, bufsize)
-
-    # loadstream(file; blocksize = blocksize)
-    buffer = try
-        read(source)
-    finally
-        close(source)
-    end
-    buffer
+    loadstream(MP3FileSource, filename(path), mpg123, info, bufsize)
 end
 
 # ---------------------------------------------------------------------------- #
