@@ -15,12 +15,12 @@ mpg123_jll = "3205ef68-7822-558b-ad0d-1b4740f12437"
 [compat]
 DSP = "0.7, 0.8"
 FixedPointNumbers = "0.8"
-LinearAlgebra = "1.11"
-StatsBase = "0.34"
-Unitful = "1.24"
+LinearAlgebra = "1"
+StatsBase = "0.33, 0.34"
+Unitful = "1.25"
+libsndfile_jll = "1"
+mpg123_jll = "1"
 julia = "1"
-libsndfile_jll = "1.1"
-mpg123_jll = "1.33"
 
 [extras]
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"

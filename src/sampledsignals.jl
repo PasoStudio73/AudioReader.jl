@@ -55,6 +55,8 @@ function SndFileSource(src, filePtr, sfinfo, bufsize=4096)
     SndFileSource(src, filePtr, sfinfo, Int64(1), readbuf)
 end
 
+Base.eltype(::Type{SndFileSource{T, U}}) where {T, U} = T
+
 nchannels(str::SndFileSource) = Int(str.sfinfo.channels)
 samplerate(str::SndFileSource) = str.sfinfo.samplerate
 nframes(source::SndFileSource) = source.sfinfo.frames
