@@ -4,6 +4,9 @@
 abstract type AbstractDataFormat{sym} end
 abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
 
+const Sym2Info = Union{Base.Callable, Vector{UInt8}, Tuple{Vector{UInt8},Vector{UInt8}}}
+const ExpectedMagic = Union{Vector{UInt8}, Base.CodeUnits{UInt8, String}}
+
 """
     @format_str(s)
 
@@ -43,7 +46,7 @@ detectwav(io) = detect_riff(io, b"WAVE")
 
 # Cf. https://developers.google.com/speed/webp/docs/riff_container#riff_file_format, 
 # and https://learn.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-#chunks
-function detect_riff(io::IO, expected_magic::AbstractVector{UInt8})
+function detect_riff(io::IO, expected_magic::ExpectedMagic)::Bool
     getlength(io) >= 12 || return false
     buf = Vector{UInt8}(undef, 4)
     fourcc = read!(io, buf)
@@ -63,7 +66,7 @@ const ext2sym = Dict{String, Union{Symbol,Vector{Symbol}}}(
     ".mp3"  => :MP3,
 )
 
-const sym2info = Dict{Symbol,Any}(
+const sym2info = Dict{Symbol,Sym2Info}(
     :WAV  => detectwav,
     :FLAC => UInt8[0x66, 0x4c, 0x61, 0x43],
     :OGG  => UInt8[0x4f, 0x67, 0x67, 0x53],

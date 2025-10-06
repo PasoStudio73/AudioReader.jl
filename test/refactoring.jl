@@ -26,6 +26,6 @@ test1 = FileIO.load(filepath)
 # 431.596 μs (101 allocations: 674.66 KiB)
 
 test2 = AudioReader.load(filepath)
-@btime AudioReader.load(filepath)
+@btime AudioReader.load(filepath, mono=false)
 # 253.447 μs (117 allocations: 592.44 KiB)
 # 197.545 μs (78 allocations: 579.35 KiB)

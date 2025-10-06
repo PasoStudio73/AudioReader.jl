@@ -13,12 +13,12 @@ const sf_count_t = Int64
 #                               wav soundfiles                                 #
 # ---------------------------------------------------------------------------- #
 mutable struct SF_Info
-    frames::sf_count_t
-    samplerate::Int32
-    channels::Int32
-    format::Int32
-    sections::Int32
-    seekable::Int32
+    frames     :: sf_count_t
+    samplerate :: Int32
+    channels   :: Int32
+    format     :: Int32
+    sections   :: Int32
+    seekable   :: Int32
 end
 
 SF_Info() = SF_Info(0, 0, 0, 0, 0, 0)
@@ -48,7 +48,12 @@ mutable struct SndFileSource{T, S<:Union{String, LengthIO}} <: AbstractSampleSou
     readbuf::Array{T, 2}
 end
 
-function SndFileSource(src, filePtr, sfinfo, bufsize=4096)
+function SndFileSource(
+    src::String,
+    filePtr::Ptr{Nothing},
+    sfinfo::SF_Info,
+    bufsize::Int64=4096
+)::SndFileSource
     T = fmt_to_type(sfinfo.format)
     readbuf = zeros(T, sfinfo.channels, bufsize)
 
@@ -57,9 +62,9 @@ end
 
 Base.eltype(::Type{SndFileSource{T, U}}) where {T, U} = T
 
-nchannels(str::SndFileSource) = Int(str.sfinfo.channels)
-samplerate(str::SndFileSource) = str.sfinfo.samplerate
-nframes(source::SndFileSource) = source.sfinfo.frames
+@inline nchannels(str::SndFileSource) = Int(str.sfinfo.channels)
+@inline samplerate(str::SndFileSource) = str.sfinfo.samplerate
+@inline nframes(source::SndFileSource) = source.sfinfo.frames
 
 # ---------------------------------------------------------------------------- #
 #                                 SampleBuf                                    #
@@ -82,9 +87,9 @@ SampleBuf(T::Type, sr, dims...) = SampleBuf(Array{T}(undef, dims...), sr)
 SampleBuf(T::Type, sr, len::Quantity) = SampleBuf(T, sr, inframes(Int,len,sr))
 SampleBuf(T::Type, sr, len::Quantity, ch) = SampleBuf(T, sr, inframes(Int,len,sr), ch)
 
-nchannels(buf::AbstractSampleBuf{T, 2}) where {T} = size(buf.data, 2)
-nchannels(buf::AbstractSampleBuf{T, 1}) where {T} = 1
-nframes(buf::AbstractSampleBuf) = size(buf.data, 1)
+@inline nchannels(buf::AbstractSampleBuf{T, 2}) where {T} = size(buf.data, 2)
+@inline nchannels(buf::AbstractSampleBuf{T, 1}) where {T} = 1
+@inline nframes(buf::AbstractSampleBuf) = size(buf.data, 1)
 
 Base.size(buf::AbstractSampleBuf) = size(buf.data)
 Base.IndexStyle(::Type{T}) where {T <: AbstractSampleBuf} = Base.IndexLinear()

@@ -8,11 +8,11 @@ const AudioFormat{T} = Union{Vector{T}, Array{T}} where T
 # ---------------------------------------------------------------------------- #
 #                                 audio utils                                  #
 # ---------------------------------------------------------------------------- #
-convert2float32(file::SampleBuf)::Array{Float32} = Float32.(file.data)
-convert2mono(data::AbstractArray) = vec(mean(data, dims=2))
-normalize(data::Array{<:Real})::Array{<:Real} = data ./ maximum(abs.(data))
+@inline convert2float32(file::SampleBuf)::Array{Float32} = Float32.(file.data)
+@inline convert2mono(data::Array{<:Real})::Vector{<:Real} = vec(mean(data, dims=2))
+@inline normalize(data::Array{<:Real})::Array{<:Real} = data ./ maximum(abs.(data))
 
-function convert_sr(file::Array{<:Real}, sr::Integer, new_sr::Int64)::Array{<:Real}
+function convert_sr(file::Array{<:Real}, sr::Int64, new_sr::Int64)::Array{<:Real}
     ratio = Rational(new_sr, sr)
     eltype(file).(resample(file, ratio))
 end
@@ -59,12 +59,11 @@ end
 #                           AudioFile constructor                              #
 # ---------------------------------------------------------------------------- #
 function AudioFile(
-    # @nospecialize(file::SampleBuf);
-    file;
+    @nospecialize(file::SampleBuf);
     sr   :: Union{Nothing, Int64}=nothing,
     norm :: Bool=false,
     mono :: Bool=true,
-)
+)::AudioFile
     audiodata = eltype(file) == Float32 ? data(file) : convert2float32(file)
     mono && (audiodata = convert2mono(audiodata))
 
@@ -92,21 +91,21 @@ Base.length(f::AudioFile) = size(f.data,1)
 
 Returns the audio data associated with [`File`](@ref) `file`.
 """
-data(f::AudioFile) = f.data
+@inline data(f::AudioFile) = f.data
 
 """
     samplerate(file)
 
 Returns the sample rate associated with [`File`](@ref) `file`.
 """
-samplerate(f::AudioFile) = f.sr
+@inline samplerate(f::AudioFile) = f.sr
 
 """
     nchannels(file::AudioFile) -> Int
 
 Return the number of audio channels in an AudioFile.
 """
-nchannels(f::AudioFile) = size(f.data, 2)
+@inline nchannels(f::AudioFile) = size(f.data, 2)
 
 """
     origin_sr(file::AudioFile) -> Int
@@ -114,11 +113,11 @@ nchannels(f::AudioFile) = size(f.data, 2)
 Return the original sample rate of the audio file before any resampling.
 Return the same value of sr() if any reasmplig was applied.
 """
-origin_sr(f::AudioFile) = f.origin_sr
+@inline origin_sr(f::AudioFile) = f.origin_sr
 
 """
     is_norm(file::AudioFile) -> Bool
 
 Check whether the audio file data has been normalized.
 """
-is_norm(f::AudioFile) = f.norm
+@inline is_norm(f::AudioFile) = f.norm
