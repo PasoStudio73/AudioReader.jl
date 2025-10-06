@@ -134,4 +134,4 @@ filename(@nospecialize(f::File)) = f.filename
 
 Returns the file extension associated with [`File`](@ref) `file`.
 """
-Base.eltype(@nospecialize(f::File)) = splitext(filename(f))[2]
+file_extension(@nospecialize(f::File)) = splitext(filename(f))[2]
