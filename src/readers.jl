@@ -1,7 +1,8 @@
 # ---------------------------------------------------------------------------- #
 #                                    types                                     #
 # ---------------------------------------------------------------------------- #
-const DEFAULT_BLOCKSIZE=4096
+const DEFAULT_BLOCKSIZE = 4096
+const RawAudio = Union{Float32, Q0f15}
 
 # ---------------------------------------------------------------------------- #
 #                                    read!                                     #
@@ -23,7 +24,7 @@ Base.read!(source::AbstractSampleSource, arr::SampleBuf)::Int64 = read!(source, 
 
 function unsafe_read!(
     source      :: SndFileSource,
-    buf         :: Matrix{<:Q0f15},
+    buf         :: Matrix{<:RawAudio},
     frameoffset :: Int64,
     framecount  :: Int64
 )::Int64
@@ -50,7 +51,7 @@ end
 
 function unsafe_read!(
     source      :: MP3FileSource,
-    buf         :: Matrix{<:Q0f15},
+    buf         :: Matrix{<:RawAudio},
     frameoffset :: Int64,
     framecount  :: Int64
 )::Int64

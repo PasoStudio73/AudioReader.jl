@@ -4,9 +4,9 @@ using AudioReader
 test_files_dir()    = joinpath(dirname(@__FILE__), "test_files")
 test_file(filename) = joinpath(test_files_dir(), filename)
 
-wav_file = test_file("test.wav")
-mp3_file = test_file("test.mp3")
-ogg_file = test_file("test.ogg")
+wav_file  = test_file("test.wav")
+mp3_file  = test_file("test.mp3")
+ogg_file  = test_file("test.ogg")
 flac_file = test_file("test.flac")
 
 @test_nowarn File{format"WAV"}(wav_file)
@@ -57,4 +57,3 @@ audiofile = load(mp3_file; mono=true, sr=44513)
 audio      = load(mp3_file; norm=false)
 audio_norm = load(mp3_file; norm=true)
 @test sum(abs.(data(audio_norm))) > sum(abs.(data(audio)))
-
