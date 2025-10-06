@@ -52,7 +52,7 @@ module AudioReader
 # - **Lossless**: WAV, FLAC
 # - **Lossy**: MP3, OGG
 
-using FixedPointNumbers: Fixed
+using FixedPointNumbers: Fixed, Q0f15
 using LinearAlgebra: transpose!
 using Unitful: Quantity
 

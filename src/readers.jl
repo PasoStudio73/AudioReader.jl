@@ -1,12 +1,13 @@
 # ---------------------------------------------------------------------------- #
 #                                    types                                     #
 # ---------------------------------------------------------------------------- #
-const DEFAULT_BLOCKSIZE=4096
+const DEFAULT_BLOCKSIZE = 4096
+const RawAudio = Union{Float32, Q0f15}
 
 # ---------------------------------------------------------------------------- #
 #                                    read!                                     #
 # ---------------------------------------------------------------------------- #
-function Base.read!(source::AbstractSampleSource, buf::SampleBuf, n::Integer)
+function Base.read!(source::AbstractSampleSource, buf::SampleBuf, n::Int64)::Int64
     if nchannels(source) == nchannels(buf) &&
             eltype(source) == eltype(buf) &&
             isapprox(samplerate(source), samplerate(buf))
@@ -19,9 +20,14 @@ function Base.read!(source::AbstractSampleSource, buf::SampleBuf, n::Integer)
 end
 
 # if no frame count is given default to the number of frames in the destination
-Base.read!(source::AbstractSampleSource, arr::AbstractArray) = read!(source, arr, nframes(arr))
+Base.read!(source::AbstractSampleSource, arr::SampleBuf)::Int64 = read!(source, arr, nframes(arr))
 
-function unsafe_read!(source::SndFileSource, buf::Array, frameoffset, framecount)
+function unsafe_read!(
+    source      :: SndFileSource,
+    buf         :: Matrix{<:RawAudio},
+    frameoffset :: Int64,
+    framecount  :: Int64
+)::Int64
     total = min(framecount, nframes(source) - source.pos + 1)
     nread = 0
     readbuf = source.readbuf
@@ -43,7 +49,12 @@ function unsafe_read!(source::SndFileSource, buf::Array, frameoffset, framecount
     nread
 end
 
-function unsafe_read!(source::MP3FileSource, buf::Array, frameoffset, framecount)
+function unsafe_read!(
+    source      :: MP3FileSource,
+    buf         :: Matrix{<:RawAudio},
+    frameoffset :: Int64,
+    framecount  :: Int64
+)::Int64
     total = min(framecount, nframes(source) - source.pos)
     nread = 0
 
@@ -64,13 +75,13 @@ function unsafe_read!(source::MP3FileSource, buf::Array, frameoffset, framecount
         nr == n || break
     end
 
-    nread
+    return nread
 end
 
 # ---------------------------------------------------------------------------- #
 #                                    read                                      #
 # ---------------------------------------------------------------------------- #
-function Base.read(source::AbstractSampleSource)
+function Base.read(source::AbstractSampleSource)::SampleBuf
     buf = SampleBuf(eltype(source),
                     samplerate(source),
                     DEFAULT_BLOCKSIZE,
@@ -85,22 +96,26 @@ function Base.read(source::AbstractSampleSource)
         end
         n == nframes(buf) || break
     end
-    SampleBuf(hcat(cumbufs...), samplerate(source))
+
+    return SampleBuf(hcat(cumbufs...), samplerate(source))
 end
 
 # ---------------------------------------------------------------------------- #
 #                                   close                                      #
 # ---------------------------------------------------------------------------- #
-function Base.close(s::SndFileSource)
+function Base.close(s::SndFileSource)::Nothing
     if s.filePtr != C_NULL
         sf_close(s.filePtr)
         s.filePtr = C_NULL
     else
         @warn "close called more than once on $s"
     end
+
+    return nothing
 end
 
-@inline function Base.close(source::MP3FileSource)
+@inline function Base.close(source::MP3FileSource)::Nothing
     mpg123_close(source.mpg123)
     mpg123_delete(source.mpg123)
+    return nothing
 end

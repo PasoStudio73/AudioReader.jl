@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------- #
 #                                  match utils                                 #
 # ---------------------------------------------------------------------------- #
-function magic_equal(magic, buffer)
+function magic_equal(magic::Vector{UInt8}, buffer::Vector{UInt8})::Bool
     length(magic) > length(buffer) && return false
     for (i,elem) in enumerate(magic)
         buffer[i] != elem && return false
@@ -9,20 +9,20 @@ function magic_equal(magic, buffer)
     true
 end
 
-function getlength(io, pos=position(io))
+function getlength(io::IOStream, pos::Int64=position(io))::Int64
     seekend(io)
     len = position(io)
     seek(io, pos)
     return len
 end
 
-function match(io, magic::Vector{UInt8})
+function match(io::IOStream, magic::Vector{UInt8})::Bool
     len = getlength(io)
     len < length(magic) && return false
-    return magic_equal(magic, read(io, length(magic)))
+    magic_equal(magic, read(io, length(magic)))
 end
 
-function match(io, magics::Tuple{Vector{UInt8}, Vector{UInt8}})::Bool
+function match(io::IOStream, magics::Tuple{Vector{UInt8}, Vector{UInt8}})::Bool
     lengths = map(length, magics)
     len = getlength(io)
     tmp = read(io, min(len, maximum(lengths)))
@@ -34,7 +34,7 @@ function match(io, magics::Tuple{Vector{UInt8}, Vector{UInt8}})::Bool
     return false
 end
 
-function match(io, @nospecialize(magic::Function))
+function match(io::IOStream, @nospecialize(magic::Function))::Bool
     seekstart(io)
     try
         magic(io)
@@ -47,7 +47,7 @@ end
 # ---------------------------------------------------------------------------- #
 #                              load audiofiles                                 #
 # ---------------------------------------------------------------------------- #
-function filecheck(file::AbstractString)
+function filecheck(file::String)::Symbol
     _, ext = splitext(file)
     if haskey(ext2sym, ext)
         sym = ext2sym[ext]
@@ -110,7 +110,7 @@ function load_helper(path::File{format"MP3"})
     datatype = encoding_to_type(encoding)
     encsize = sizeof(datatype)
 
-    info = MP3INFO(nframes, nchannels, samplerate, datatype)
+    info = MP3Info(nframes, nchannels, samplerate, datatype)
     bufsize = div(blocksize, encsize * nchannels)
     loadstream(MP3FileSource, filename(path), mpg123, info, bufsize)
 end
@@ -169,7 +169,7 @@ normalized = norm(audio)    # Return true if audio was normalized
 
 See also: [`AudioFile`](@ref)
 """
-function load(filename::AbstractString; kwargs...)
+function load(filename::AbstractString; kwargs...)::AudioFile
     sym = filecheck(filename)
     file = File{AbstractDataFormat{sym}}(filename)
     samplebuf = load_helper(file)
