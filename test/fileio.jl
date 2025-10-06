@@ -59,9 +59,9 @@ audio_norm = load(mp3_file; norm=true)
 @test sum(abs.(data(audio_norm))) > sum(abs.(data(audio)))
 
 # Create format types using string literals
-@test wav_format  == format"WAV"     # AbstractDataFormat{:WAV}
-@test mp3_format  == format"MP3"     # AbstractDataFormat{:MP3}
-@test flac_format == format"FLAC"    # AbstractDataFormat{:FLAC}
+@test format"WAV"  == AudioReader.AbstractDataFormat{:WAV}
+@test format"MP3"  == AudioReader.AbstractDataFormat{:MP3}
+@test format"FLAC" == AudioReader.AbstractDataFormat{:FLAC}
 
 # Use in File construction
 file = File{format"MP3"}("audio.mp3")
