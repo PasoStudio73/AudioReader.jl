@@ -47,7 +47,7 @@ detectwav(io) = detect_riff(io, b"WAVE")
 # Cf. https://developers.google.com/speed/webp/docs/riff_container#riff_file_format, 
 # and https://learn.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-#chunks
 function detect_riff(io::IO, expected_magic::ExpectedMagic)::Bool
-    getlength(io) >= 12 || return false
+    filesize(io) >= 12 || return false
     buf = Vector{UInt8}(undef, 4)
     fourcc = read!(io, buf)
     fourcc == b"RIFF" || return false

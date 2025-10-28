@@ -48,7 +48,6 @@ module AudioReader
 # ```
 
 # ## Supported Formats
-
 # - **Lossless**: WAV, FLAC
 # - **Lossy**: MP3, OGG
 

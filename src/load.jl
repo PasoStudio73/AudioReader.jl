@@ -9,27 +9,18 @@ function magic_equal(magic::Vector{UInt8}, buffer::Vector{UInt8})::Bool
     true
 end
 
-function getlength(io::IOStream, pos::Int64=position(io))::Int64
-    seekend(io)
-    len = position(io)
-    seek(io, pos)
-    return len
-end
-
 function match(io::IOStream, magic::Vector{UInt8})::Bool
-    len = getlength(io)
+    len = filesize(io)
     len < length(magic) && return false
     magic_equal(magic, read(io, length(magic)))
 end
 
 function match(io::IOStream, magics::Tuple{Vector{UInt8}, Vector{UInt8}})::Bool
     lengths = map(length, magics)
-    len = getlength(io)
+    len = filesize(io)
     tmp = read(io, min(len, maximum(lengths)))
     for m in magics # start with the longest since they are most specific
-        if magic_equal(m, tmp)
-            return true
-        end
+        magic_equal(m, tmp) && return true
     end
     return false
 end
@@ -82,8 +73,6 @@ end
 # convert a `load` call into a `loadstreaming` call that properly
 # cleans up the stream
 function load_helper(src::File{<:loseless_format}, args...)
-    # str = loadstreaming(src, args...)
-
     sfinfo = SF_Info()
     fname = filename(src)
 
@@ -104,9 +93,9 @@ function load_helper(path::File{format"MP3"})
     mpg123_open(mpg123, path.filename)
     nframes = mpg123_length(mpg123)
     samplerate, nchannels, encoding = mpg123_getformat(mpg123)
-    # if blocksize < 0
-        blocksize = mpg123_outblock(mpg123)
-    # end
+
+    blocksize = mpg123_outblock(mpg123)
+
     datatype = encoding_to_type(encoding)
     encsize = sizeof(datatype)
 
