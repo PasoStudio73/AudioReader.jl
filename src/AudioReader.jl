@@ -97,7 +97,7 @@ export load
 include("load.jl")
 
 export AudioFile
-export data, samplerate, nchannels, origin_sr, is_norm
+export get_data, get_sr, get_origin_sr, get_nchannels, is_norm
 export convert2mono
 include("audiofile.jl")
 
