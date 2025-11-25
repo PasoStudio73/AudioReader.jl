@@ -118,5 +118,3 @@ plot!(orig_indices, res_data[res_indices],
       linewidth=1.5, 
       linestyle=:dash,
       alpha=0.7)
-
-
