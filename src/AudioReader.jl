@@ -49,7 +49,6 @@ include("load.jl")
 
 export AudioFile
 export get_data, get_sr, get_origin_sr, get_nchannels, is_norm
-export convert2mono
 include("audiofile.jl")
 
 end
