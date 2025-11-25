@@ -57,4 +57,11 @@ audio = load("example.wav"; mono=true, norm=true)
 
 # Load an mp3 file and resample it to 8000kHz
 audio = load("example.mp3"; sr=8000)
+
+# access audio properties
+data = get_data(audio)            # Get the audio data array
+sr = get_sr(audio)                # Get current sample rate
+origin_sr = get_origin_sr(audio)  # Get original sample rate
+nchannels = get_nchannels(audio)  # Get number of channels
+normalized = is_norm(audio)       # Check if data is normalized
 ```
