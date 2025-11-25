@@ -2,6 +2,7 @@ using Test
 using AudioReader
 
 using MAT
+using Plots
 
 test_files_dir()    = joinpath(dirname(@__FILE__), "test_files")
 test_file(filename) = joinpath(test_files_dir(), filename)
@@ -80,3 +81,42 @@ matlab_file(filename) = joinpath(matlab_files_dir(), filename)
 
     @test isapprox(mp3_data_mat, mp3_data_a911)
 end
+
+# ---------------------------------------------------------------------------- #
+#                                  resampling                                  #
+# ---------------------------------------------------------------------------- #
+orig_file = AudioReader.load(wav_file)
+orig_data = AudioReader.get_data(orig_file)
+res_file  = AudioReader.load(wav_file, sr=8000)
+res_data  = AudioReader.get_data(res_file)
+
+# plot comparison
+plot(orig_data[1:2000], label="Original (16kHz)", title="Comparison", linewidth=1.5)
+plot!(1:2:2000, res_data[1:1000], label="Resampled (8kHz)", linewidth=1.5, linestyle=:dash)
+
+orig_file = AudioReader.load(mp3_file)
+orig_data = AudioReader.get_data(orig_file)
+res_file  = AudioReader.load(mp3_file, sr=96000)
+res_data  = AudioReader.get_data(res_file)
+
+# calculate the ratio: 96000/44100 ≈ 2.177
+ratio = 96000 / 44100
+
+# plot comparison
+n_samples = 4000
+orig_indices = 1:n_samples
+res_indices = round.(Int, 1:ratio:n_samples*ratio)
+
+plot(orig_indices, orig_data[1:n_samples], 
+     label="Original (44.1kHz)", 
+     title="MP3 Comparison: 44.1kHz vs 96kHz", 
+     linewidth=1.5,
+     xlabel="Sample index (normalized)",
+     ylabel="Amplitude")
+plot!(orig_indices, res_data[res_indices], 
+      label="Resampled (96kHz)", 
+      linewidth=1.5, 
+      linestyle=:dash,
+      alpha=0.7)
+
+
