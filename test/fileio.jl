@@ -32,31 +32,31 @@ fakewav = test_file("invalid/text.wav")
 
 audiofile = load(mp3_file)
 @test audiofile isa AudioFile
-@test nchannels(audiofile)  == 1
-@test samplerate(audiofile) == 44100
-@test origin_sr(audiofile)  == 44100
+@test get_nchannels(audiofile)  == 1
+@test get_sr(audiofile) == 44100
+@test get_origin_sr(audiofile)  == 44100
 @test is_norm(audiofile)    == false
 
 audiofile = load(mp3_file; mono=false, norm=true)
 @test audiofile isa AudioFile
-@test nchannels(audiofile)  == 2
-@test samplerate(audiofile) == 44100
-@test origin_sr(audiofile)  == 44100
+@test get_nchannels(audiofile)  == 2
+@test get_sr(audiofile) == 44100
+@test get_origin_sr(audiofile)  == 44100
 @test is_norm(audiofile)    == true
 
 audiofile = load(mp3_file; sr=8000)
 @test audiofile isa AudioFile
-@test samplerate(audiofile) == 8000
-@test origin_sr(audiofile)  == 44100
+@test get_sr(audiofile) == 8000
+@test get_origin_sr(audiofile)  == 44100
 
 audiofile = load(mp3_file; mono=true, sr=44513)
 @test audiofile isa AudioFile
 @test eltype(audiofile)     == Float32
-@test samplerate(audiofile) == 44513
+@test get_sr(audiofile) == 44513
 
 audio      = load(mp3_file; norm=false)
 audio_norm = load(mp3_file; norm=true)
-@test sum(abs.(data(audio_norm))) > sum(abs.(data(audio)))
+@test sum(abs.(get_data(audio_norm))) > sum(abs.(get_data(audio)))
 
 # Create format types using string literals
 @test format"WAV"  == AudioReader.AbstractDataFormat{:WAV}
@@ -66,5 +66,5 @@ audio_norm = load(mp3_file; norm=true)
 # Use in File construction
 file = File{format"MP3"}("audio.mp3")
 
-@test data(audio) isa Vector{Float32}
+@test get_data(audio) isa Array{Float32}
 @test file_extension(file) == ".mp3"

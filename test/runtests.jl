@@ -13,6 +13,7 @@ println("Julia version: ", VERSION)
 test_suites = [
     ("File Reader",          ["fileio.jl",               ]),
     ("Format Compatibility", ["format_compatibility.jl", ]),
+    ("Audiofile",            ["audiofile.jl", ]),
 ]
 
 @testset "AudioReader.jl" begin

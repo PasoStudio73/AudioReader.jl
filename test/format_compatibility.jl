@@ -26,10 +26,10 @@ m16 = load(mp3_file; mono=true)
 o16 = load(ogg_file; mono=true)
 f16 = load(flac_file; mono=true)
 
-@test isapprox(libw16, data(w16))
-@test isapprox(libm16, data(m16))
-@test isapprox(libo16, data(o16))
-@test isapprox(libf16, data(f16))
+@test isapprox(libw16, get_data(w16))
+@test isapprox(libm16, get_data(m16))
+@test isapprox(libo16, get_data(o16))
+@test isapprox(libf16, get_data(f16))
 
 # resample
 @test_nowarn load(wav_file; sr=8000)

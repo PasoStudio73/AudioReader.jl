@@ -1,7 +1,7 @@
 name = "AudioReader"
 uuid = "a9c2ce0f-e965-4f6d-9ec4-ce2d5ed55f28"
 authors = ["Riccardo PASINI"]
-version = "0.1.4"
+version = "0.2.0"
 
 [deps]
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
@@ -24,8 +24,9 @@ mpg123_jll = "1"
 julia = "1"
 
 [extras]
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["PyCall", "Test"]
+test = ["MAT", "PyCall", "Test"]

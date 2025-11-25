@@ -1,20 +1,23 @@
+# ---------------------------------------------------------------------------- #
+#                               abstract types                                 #
+# ---------------------------------------------------------------------------- #
 abstract type AbstractAudioFile end
 
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
 # ---------------------------------------------------------------------------- #
-const AudioFormat{T} = Union{Vector{T}, Array{T}} where T
+const AudioFormat{T} = Union{Vector{T}, Array{T}}
 
 # ---------------------------------------------------------------------------- #
 #                                 audio utils                                  #
 # ---------------------------------------------------------------------------- #
-@inline convert2float32(file::SampleBuf)::Array{Float32} = Float32.(file.data)
-@inline convert2mono(data::Array{<:Real})::Vector{<:Real} = vec(mean(data, dims=2))
-@inline normalize(data::Array{<:Real})::Array{<:Real} = data ./ maximum(abs.(data))
+@inline _convert_format(file::SampleBuf, T::Type) = T.(file.data)
+@inline _convert_mono(data::AudioFormat{T}) where {T<:Real} = mean(data, dims=2)
+@inline _normalize(data::AudioFormat{T}) where {T<:Real} = data ./ maximum(abs.(data))
 
-function convert_sr(file::Array{<:Real}, sr::Int64, new_sr::Int64)::Array{<:Real}
+function _convert_sr(file::AudioFormat{T}, sr::Int64, new_sr::Int64) where {T<:Real}
     ratio = Rational(new_sr, sr)
-    eltype(file).(resample(file, ratio))
+    eltype(file).(resample(file, ratio, dims=1))
 end
 
 # ---------------------------------------------------------------------------- #
@@ -37,6 +40,17 @@ This struct represents audio data that has been loaded and potentially processed
 - `origin_sr::Int64`: Original sample rate in Hz from the source file
 - `norm::Bool`: Whether the audio data has been normalized
 
+# Constructor
+    AudioFile(file::SampleBuf; sr=nothing, norm=false, mono=true, format=Float32)
+
+- `file`: Source audio buffer.
+- `sr`: Target sample rate (optional; if not given, uses original).
+- `norm`: If true, normalizes audio data.
+- `mono`: If true, converts audio to mono.
+- `format`: Output data type (default: `Float32`).
+
+The constructor loads and processes audio data, applying type conversion, mono conversion, resampling, and normalization as requested.
+
 See also: [`load`](@ref)
 """
 struct AudioFile{T} <: AbstractAudioFile
@@ -46,38 +60,22 @@ struct AudioFile{T} <: AbstractAudioFile
     norm      :: Bool
 
     function AudioFile(
-        audiodata :: AudioFormat{T},
-        sr        :: Int64,
-        origin_sr :: Int64,
-        norm      :: Bool
-    ) where T
-        new{T}(audiodata, sr, origin_sr, norm)
+        @nospecialize(file::SampleBuf);
+        sr     :: Union{Nothing, Int64}=nothing,
+        norm   :: Bool=false,
+        mono   :: Bool=true,
+        format :: Type=Float32
+    )::AudioFile
+        audiodata = eltype(file) == format ? data(file) : _convert_format(file, format)
+        mono && (audiodata = _convert_mono(audiodata))
+
+        origin_sr = samplerate(file)
+        isnothing(sr) ? (sr = origin_sr) : (audiodata = _convert_sr(audiodata, samplerate(file), sr))
+
+        norm && (audiodata = _normalize(audiodata))
+
+        new{eltype(audiodata)}(audiodata, sr, origin_sr, norm)
     end
-end
-
-# ---------------------------------------------------------------------------- #
-#                           AudioFile constructor                              #
-# ---------------------------------------------------------------------------- #
-function AudioFile(
-    @nospecialize(file::SampleBuf);
-    sr   :: Union{Nothing, Int64}=nothing,
-    norm :: Bool=false,
-    mono :: Bool=true,
-)::AudioFile
-    audiodata = eltype(file) == Float32 ? data(file) : convert2float32(file)
-    mono && (audiodata = convert2mono(audiodata))
-
-    origin_sr = samplerate(file)
-
-    if isnothing(sr)
-        sr = origin_sr
-    else
-        audiodata = convert_sr(audiodata, samplerate(file), sr)
-    end
-
-    norm && (audiodata = normalize(audiodata))
-
-    AudioFile(audiodata, sr, origin_sr, norm)
 end
 
 #------------------------------------------------------------------------------#
@@ -87,37 +85,37 @@ Base.eltype(::AudioFile{T}) where T = T
 Base.length(f::AudioFile) = size(f.data,1)
 
 """
-    data(file)
+    get_data(file::AudioFile) -> Array
 
-Returns the audio data associated with [`File`](@ref) `file`.
+Returns the audio data associated with [`AudioFile`](@ref) `file`.
 """
-@inline data(f::AudioFile) = f.data
-
-"""
-    samplerate(file)
-
-Returns the sample rate associated with [`File`](@ref) `file`.
-"""
-@inline samplerate(f::AudioFile) = f.sr
+@inline get_data(f::AudioFile)::Array = f.data
 
 """
-    nchannels(file::AudioFile) -> Int
+    get_sr(file::AudioFile) -> Int64
 
-Return the number of audio channels in an AudioFile.
+Returns the sample rate associated with [`AudioFile`](@ref) `file`.
 """
-@inline nchannels(f::AudioFile) = size(f.data, 2)
+@inline get_sr(f::AudioFile)::Int64 = f.sr
 
 """
-    origin_sr(file::AudioFile) -> Int
+    origin_sr(file::AudioFile) -> Int64
 
-Return the original sample rate of the audio file before any resampling.
+Return the original sample rate of the [`AudioFile`](@ref) `file` before any resampling.
 Return the same value of sr() if any reasmplig was applied.
 """
-@inline origin_sr(f::AudioFile) = f.origin_sr
+@inline get_origin_sr(f::AudioFile)::Int64 = f.origin_sr
+
+"""
+    get_nchannels(file::AudioFile) -> Int64
+
+Return the number of audio channels in an [`AudioFile`](@ref) `file`.
+"""
+@inline get_nchannels(f::AudioFile)::Int64 = size(f.data, 2)
 
 """
     is_norm(file::AudioFile) -> Bool
 
-Check whether the audio file data has been normalized.
+Check whether the [`AudioFile`](@ref) `file` data has been normalized.
 """
-@inline is_norm(f::AudioFile) = f.norm
+@inline is_norm(f::AudioFile)::Bool = f.norm
