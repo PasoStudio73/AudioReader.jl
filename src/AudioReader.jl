@@ -2,7 +2,7 @@ module AudioReader
 # A Julia package for reading and preprocessing audio files with support for both lossless 
 # and lossy audio formats.
 
-using FixedPointNumbers: Fixed, Q0f15
+using FixedPointNumbers: Fixed, Q0f15, Q0f31
 using LinearAlgebra: transpose!
 using Unitful: Quantity
 
