@@ -4,8 +4,10 @@
 abstract type AbstractDataFormat{sym} end
 abstract type AbstractFormatted{F<:AbstractDataFormat} end  # a specific file
 
-const Sym2Info = Union{Base.Callable, Vector{UInt8}, Tuple{Vector{UInt8},Vector{UInt8}}}
-const ExpectedMagic = Union{Vector{UInt8}, Base.CodeUnits{UInt8, String}}
+const Sym2Info =
+    Union{Base.Callable, Vector{UInt8}, Tuple{Vector{UInt8},Vector{UInt8}}}
+const ExpectedMagic =
+    Union{Vector{UInt8}, Base.CodeUnits{UInt8, String}}
 
 """
     @format_str(s)
@@ -44,8 +46,6 @@ end
 # ---------------------------------------------------------------------------- #
 detectwav(io) = detect_riff(io, b"WAVE")
 
-# Cf. https://developers.google.com/speed/webp/docs/riff_container#riff_file_format, 
-# and https://learn.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-#chunks
 function detect_riff(io::IO, expected_magic::ExpectedMagic)::Bool
     filesize(io) >= 12 || return false
     buf = Vector{UInt8}(undef, 4)
@@ -60,17 +60,17 @@ end
 #                                 audio magic                                  #
 # ---------------------------------------------------------------------------- #
 const ext2sym = Dict{String, Union{Symbol,Vector{Symbol}}}(
-    ".wav"  => :WAV,
+    ".wav" => :WAV,
     ".flac" => :FLAC,
-    ".ogg"  => :OGG,
-    ".mp3"  => :MP3,
+    ".ogg" => :OGG,
+    ".mp3" => :MP3,
 )
 
 const sym2info = Dict{Symbol,Sym2Info}(
-    :WAV  => detectwav,
+    :WAV => detectwav,
     :FLAC => UInt8[0x66, 0x4c, 0x61, 0x43],
-    :OGG  => UInt8[0x4f, 0x67, 0x67, 0x53],
-    :MP3  => (UInt8[0x49, 0x44, 0x33], UInt8[0xff, 0xfb]),
+    :OGG => UInt8[0x4f, 0x67, 0x67, 0x53],
+    :MP3 => (UInt8[0x49, 0x44, 0x33], UInt8[0xff, 0xfb]),
 )
 
 # ---------------------------------------------------------------------------- #
@@ -86,7 +86,8 @@ the file format in the type system. This enables compile-time format dispatch
 and ensures type safety when working with different audio formats.
 
 # Type Parameters
-- `F<:AbstractDataFormat`: The audio format type (e.g., `AbstractDataFormat{:WAV}`)
+- `F<:AbstractDataFormat`: The audio format type
+  (e.g., `AbstractDataFormat{:WAV}`)
 
 # Fields
 - `filename::String`: The canonical file path as a string

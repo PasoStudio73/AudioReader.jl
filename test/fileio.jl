@@ -1,12 +1,12 @@
 using Test
 using AudioReader
 
-test_files_dir()    = joinpath(dirname(@__FILE__), "test_files")
+test_files_dir() = joinpath(dirname(@__FILE__), "test_files")
 test_file(filename) = joinpath(test_files_dir(), filename)
 
-wav_file  = test_file("test.wav")
-mp3_file  = test_file("test.mp3")
-ogg_file  = test_file("test.ogg")
+wav_file = test_file("test.wav")
+mp3_file = test_file("test.mp3")
+ogg_file = test_file("test.ogg")
 flac_file = test_file("test.flac")
 
 @test_nowarn File{format"WAV"}(wav_file)
@@ -25,42 +25,46 @@ actually_wav = test_file("invalid/test_is_a_wav.mp3")
 text = test_file("invalid/text.txt")
 fakewav = test_file("invalid/text.wav")
 
-@test_throws ErrorException load(oga_file)     # Unsupported extension
-@test_throws ErrorException load(actually_wav) # Wrong format (WAV with .mp3 extension)
-@test_throws ErrorException load(text)         # Unsupported extension
-@test_throws ErrorException load(fakewav)      # Wrong format (text with .wav extension)
+# Unsupported extension
+@test_throws ErrorException load(oga_file)
+# Wrong format (WAV with .mp3 extension)
+@test_throws ErrorException load(actually_wav)
+# Unsupported extension
+@test_throws ErrorException load(text)
+# Wrong format (text with .wav extension)
+@test_throws ErrorException load(fakewav)
 
 audiofile = load(mp3_file)
 @test audiofile isa AudioFile
-@test get_nchannels(audiofile)  == 1
+@test get_nchannels(audiofile) == 1
 @test get_sr(audiofile) == 44100
-@test get_origin_sr(audiofile)  == 44100
-@test is_norm(audiofile)    == false
+@test get_origin_sr(audiofile) == 44100
+@test is_norm(audiofile) == false
 
 audiofile = load(mp3_file; mono=false, norm=true)
 @test audiofile isa AudioFile
-@test get_nchannels(audiofile)  == 2
+@test get_nchannels(audiofile) == 2
 @test get_sr(audiofile) == 44100
-@test get_origin_sr(audiofile)  == 44100
-@test is_norm(audiofile)    == true
+@test get_origin_sr(audiofile) == 44100
+@test is_norm(audiofile) == true
 
 audiofile = load(mp3_file; sr=8000)
 @test audiofile isa AudioFile
 @test get_sr(audiofile) == 8000
-@test get_origin_sr(audiofile)  == 44100
+@test get_origin_sr(audiofile) == 44100
 
 audiofile = load(mp3_file; mono=true, sr=44513)
 @test audiofile isa AudioFile
-@test eltype(audiofile)     == Float32
+@test eltype(audiofile) == Float32
 @test get_sr(audiofile) == 44513
 
-audio      = load(mp3_file; norm=false)
+audio = load(mp3_file; norm=false)
 audio_norm = load(mp3_file; norm=true)
 @test sum(abs.(get_data(audio_norm))) > sum(abs.(get_data(audio)))
 
 # Create format types using string literals
-@test format"WAV"  == AudioReader.AbstractDataFormat{:WAV}
-@test format"MP3"  == AudioReader.AbstractDataFormat{:MP3}
+@test format"WAV" == AudioReader.AbstractDataFormat{:WAV}
+@test format"MP3" == AudioReader.AbstractDataFormat{:MP3}
 @test format"FLAC" == AudioReader.AbstractDataFormat{:FLAC}
 
 # Use in File construction
