@@ -82,7 +82,7 @@ struct AudioFile{T} <: AbstractAudioFile
         mono && (audiodata = _convert_mono(audiodata))
 
         origin_sr = samplerate(file)
-        isnothing(sr) ? 
+        isnothing(sr) || sr==origin_sr ? 
             (sr = origin_sr) :
             (audiodata = _convert_sr(audiodata, samplerate(file), sr))
 
