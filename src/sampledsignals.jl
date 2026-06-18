@@ -7,21 +7,28 @@ abstract type AbstractSampleBuf{T, N} <: AbstractArray{T, N} end
 # ---------------------------------------------------------------------------- #
 #                                   types                                      #
 # ---------------------------------------------------------------------------- #
-const sf_count_t = Int64
+const sf_count_t = Int
 
 # ---------------------------------------------------------------------------- #
 #                               wav soundfiles                                 #
 # ---------------------------------------------------------------------------- #
 mutable struct SF_Info
-    frames     :: sf_count_t
-    samplerate :: Int32
-    channels   :: Int32
-    format     :: Int32
-    sections   :: Int32
-    seekable   :: Int32
+    frames::sf_count_t
+    samplerate::Int32
+    channels::Int32
+    format::Int32
+    sections::Int32
+    seekable::Int32
 end
 
-SF_Info() = SF_Info(0, 0, 0, 0, 0, 0)
+SF_Info() = SF_Info(
+    sf_count_t(0),
+    Int32(0),
+    Int32(0),
+    Int32(0),
+    Int32(0),
+    Int32(0)
+)
 
 # ---------------------------------------------------------------------------- #
 #                                 LengthIO                                     #
@@ -31,33 +38,33 @@ SF_Info() = SF_Info(0, 0, 0, 0, 0, 0)
 # we can pass a pointer into the C code
 mutable struct LengthIO{T<:IO} <: IO
     io::T
-    length::Int64
+    length::Int
 end
 
-LengthIO(io, l::Integer) = LengthIO(io, Int64(l))
+LengthIO(io, l::Integer) = LengthIO(io, Int(l))
 
 # ---------------------------------------------------------------------------- #
 #                               SndFileSource                                  #
 # ---------------------------------------------------------------------------- #
 # src is either a string representing the path to the file, or an IO stream
-mutable struct SndFileSource{T, S<:Union{String, LengthIO}} <: AbstractSampleSource
+mutable struct SndFileSource{T,S<:Union{String,LengthIO}} <: AbstractSampleSource
     src::S
     filePtr::Ptr{Cvoid}
     sfinfo::SF_Info
-    pos::Int64
-    readbuf::Array{T, 2}
+    pos::Int
+    readbuf::Array{T,2}
 end
 
 function SndFileSource(
     src::String,
     filePtr::Ptr{Nothing},
     sfinfo::SF_Info,
-    bufsize::Int64=4096
+    bufsize::Int=4096
 )::SndFileSource
     T = fmt_to_type(sfinfo.format)
     readbuf = zeros(T, sfinfo.channels, bufsize)
 
-    SndFileSource(src, filePtr, sfinfo, Int64(1), readbuf)
+    SndFileSource(src, filePtr, sfinfo, Int(1), readbuf)
 end
 
 Base.eltype(::Type{SndFileSource{T, U}}) where {T, U} = T
@@ -70,22 +77,25 @@ Base.eltype(::Type{SndFileSource{T, U}}) where {T, U} = T
 #                                 SampleBuf                                    #
 # ---------------------------------------------------------------------------- #
 # Represents a multi-channel regularly-sampled buffer that stores its own sample
-# rate (in samples/second). The wrapped data is an N-dimensional array. A 1-channel
-# sample can be represented with a 1D array or an Mx1 matrix, and a C-channel
-# buffer will be an MxC matrix. So a 1-second stereo audio buffer sampled at
-# 44100Hz with 32-bit floating-point samples in the time domain would have the
-# type SampleBuf{Float32, 2}.
+# rate (in samples/second). The wrapped data is an N-dimensional array.
+# A 1-channel sample can be represented with a 1D array or an Mx1 matrix,
+# and a C-channel buffer will be an MxC matrix. So a 1-second stereo audio
+# buffer sampled at 44100Hz with 32-bit floating-point samples in the
+# time-domain would have the type SampleBuf{Float32, 2}.
 mutable struct SampleBuf{T,N} <: AbstractSampleBuf{T,N}
-    data :: Array{T,N}
-    sr   :: Int64
+    data::Array{T,N}
+    sr::Int
 end
 
 # define constructor so conversion is applied to `sr`
 SampleBuf(arr::Array{T, N}, sr::Real) where {T, N} = SampleBuf{T, N}(arr, sr)
 
-SampleBuf(T::Type, sr, dims...) = SampleBuf(Array{T}(undef, dims...), sr)
-SampleBuf(T::Type, sr, len::Quantity) = SampleBuf(T, sr, inframes(Int,len,sr))
-SampleBuf(T::Type, sr, len::Quantity, ch) = SampleBuf(T, sr, inframes(Int,len,sr), ch)
+SampleBuf(T::Type, sr, dims...) =
+    SampleBuf(Array{T}(undef, dims...), sr)
+SampleBuf(T::Type, sr, len::Quantity) =
+    SampleBuf(T, sr, inframes(Int,len,sr))
+SampleBuf(T::Type, sr, len::Quantity, ch) =
+    SampleBuf(T, sr, inframes(Int,len,sr), ch)
 
 @inline nchannels(buf::AbstractSampleBuf{T, 2}) where {T} = size(buf.data, 2)
 @inline nchannels(buf::AbstractSampleBuf{T, 1}) where {T} = 1

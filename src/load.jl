@@ -30,7 +30,8 @@ function match(io::IOStream, @nospecialize(magic::Function))::Bool
     try
         magic(io)
     catch e
-        @error("""There was an error in magic function $magic.""", exception=(e, catch_backtrace()))
+        @error("""There was an error in magic function $magic.""",
+            exception=(e, catch_backtrace()))
         false
     end
 end
@@ -46,8 +47,8 @@ function filecheck(file::String)::Symbol
 
         return open(file) do io
             match(io, magic) ? sym :
-            error("File '$file' has extension '$ext' but does not appear to be a valid" * 
-            " $(uppercase(string(sym))) file.")
+            error("File '$file' has extension '$ext' but does not appear " *
+            "to be a valid $(uppercase(string(sym))) file.")
         end
     else
         supported = join(sort(collect(keys(ext2sym))), ", ")
@@ -110,19 +111,20 @@ end
 """
     load(filename::AbstractString; kwargs...) -> AudioFile
 
-Load an audio file from disk with automatic format detection and optional processing.
+Load an audio file from disk with automatic format detection and optional
+processing.
 
-This is the main entry point for loading audio files in AudioReader. It automatically
-detects the file format, validates the file content, loads the raw audio data,
-and optionally applies processing transformations.
+This is the main entry point for loading audio files in AudioReader.
+It automatically detects the file format, validates the file content,
+loads the raw audio data, and optionally applies processing transformations.
 
 # Arguments
 - `filename::AbstractString`: Path to the audio file to load
 
 # Keyword Arguments
-- `sr::Union{Nothing,Int64}=nothing`: Target sample rate for resampling
+- `sr::Union{Nothing,Int}=nothing`: Target sample rate for resampling
   - `nothing`: Keep original sample rate
-  - `Int64`: Resample to specified rate in Hz
+  - `Int`: Resample to specified rate in Hz
 - `norm::Bool=false`: Whether to normalize audio amplitude to [-1, 1] range
 - `mono::Bool=true` : Whether to convert multi-channel audio to mono
 
@@ -151,7 +153,7 @@ audio = load("audio.mp3"; sr=22050, norm=true, mono=false)
 data = data(audio)          # Get audio samples
 sample_rate = samplerate(audio)     # Get current sample rate
 orig_sr = orig_sr(audio)    # Get original sample rate of audiofile 
-                              (identical to samplerate(audio) if no resample was applied)
+    (identical to samplerate(audio) if no resample was applied)
 channels = nchannels(audio) # Get number of channels
 normalized = norm(audio)    # Return true if audio was normalized
 ```
