@@ -1,7 +1,7 @@
 name = "AudioReader"
 uuid = "a9c2ce0f-e965-4f6d-9ec4-ce2d5ed55f28"
-authors = ["Riccardo PASINI"]
 version = "0.2.3"
+authors = ["Riccardo PASINI"]
 
 [deps]
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
@@ -14,14 +14,13 @@ mpg123_jll = "3205ef68-7822-558b-ad0d-1b4740f12437"
 
 [compat]
 DSP = "0.7, 0.8"
-FixedPointNumbers = "0.8"
+FixedPointNumbers = "0.8, 0.9"
 LinearAlgebra = "1"
 StatsBase = "0.34"
 Unitful = "1.25"
+julia = "1"
 libsndfile_jll = "1"
 mpg123_jll = "1"
-
-julia = "1"
 
 [extras]
 MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
